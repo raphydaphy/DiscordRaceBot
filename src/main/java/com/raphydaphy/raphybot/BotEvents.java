@@ -6,6 +6,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.StatusType;
 
 public class BotEvents
 {
@@ -36,6 +37,12 @@ public class BotEvents
 					BotUtils.sendMessage(event.getChannel(), content);
 					return;
 				}
+			} else if (arguments[0].equals("spam"))
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					BotUtils.sendMessage(channel, "hello!");
+				}
 			} else if (arguments[0].equals("points"))
 			{
 				int authorPoints = 0;
@@ -49,10 +56,16 @@ public class BotEvents
 					return;
 				} else if (arguments[1].equals("lb"))
 				{
-					String leaderboard = "Leaderboard:\n";
+					boolean onlyOnline = arguments.length > 2 && arguments[2].equals("online");
+					String leaderboard = onlyOnline ? "Leaderboard (Online Users Only):\n" : "Leaderboard:\n";
+					
 					for (IUser user : RaphyBot.client.getUsers())
 					{
-						leaderboard += user.getName() + " -> " + BotUtils.getPoints(user) + "\n";
+						if ((!user.getPresence().getStatus().equals(StatusType.OFFLINE)) || !onlyOnline)
+						{
+							leaderboard += user.getName() + " -> " + BotUtils.getPoints(user) + "\n";
+						}
+						
 					}
 					BotUtils.sendMessage(channel, leaderboard);
 					return;
@@ -78,8 +91,7 @@ public class BotEvents
 							{
 								BotUtils.sendMessage(channel, arguments[3] + " is not a number!");
 							}
-						}
-						else
+						} else
 						{
 							BotUtils.sendMessage(channel, "Could not find the specified user!");
 						}
