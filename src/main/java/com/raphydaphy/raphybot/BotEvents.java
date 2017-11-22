@@ -2,6 +2,7 @@ package com.raphydaphy.raphybot;
 
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IChannel;
 
 public class BotEvents 
 {
@@ -11,6 +12,9 @@ public class BotEvents
 	{
 		if (event.getMessage().getContent().startsWith(BotUtils.PREFIX))
 		{
+			long authorID = event.getAuthor().getLongID();
+			String authorName = event.getAuthor().getDisplayName(event.getGuild());
+			IChannel channel = event.getChannel();
 			String[] arguments = event.getMessage().getContent().split(" ");
 			
 			arguments[0] = arguments[0].substring(1, arguments[0].length());
@@ -30,11 +34,29 @@ public class BotEvents
 					return;
 				}
 			}
-			else if (arguments[0].equals("points"))
+			else if (arguments[0].equals("point"))
 			{
-				if (arguments.length == 1)
+				int authorPoints = BotUtils.points.get(authorID);
+				if (arguments.length == 1 || arguments[1].equals("amount"))
 				{
-					BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild()) + " has " + BotUtils.points.get(event.getAuthor().getLongID()) + " points!");
+					BotUtils.sendMessage(channel, authorName + " has " + authorPoints + " points!");
+					return;
+				}
+				else if (arguments[1].equals("give"))
+				{
+					if (arguments.length == 4)
+					{
+						try
+						{
+							BotUtils.points.put(authorID, authorPoints + Integer.valueOf(arguments[3]));
+							BotUtils.sendMessage(channel, "Given " + arguments[3] + " points to " + authorName);
+						}
+						catch (NumberFormatException e)
+						{
+							BotUtils.sendMessage(channel, arguments[3] + " is not a number!");
+						}
+						return;
+					}
 				}
 			}
 		}
