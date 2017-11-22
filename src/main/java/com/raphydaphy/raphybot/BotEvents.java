@@ -7,6 +7,8 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.StatusType;
+import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.RequestBuffer;
 
 public class BotEvents
 {
@@ -57,17 +59,32 @@ public class BotEvents
 				} else if (arguments[1].equals("lb"))
 				{
 					boolean onlyOnline = arguments.length > 2 && arguments[2].equals("online");
-					String leaderboard = onlyOnline ? "Leaderboard (Online Users Only):\n" : "Leaderboard:\n";
+
+					EmbedBuilder builder = new EmbedBuilder();
+
+					builder.withColor(255, 0, 0);
+					if (onlyOnline)
+					{
+						builder.withDescription("Only Online Users");
+					}
 					
+
+					
+					String people = "";
 					for (IUser user : RaphyBot.client.getUsers())
 					{
 						if ((!user.getPresence().getStatus().equals(StatusType.OFFLINE)) || !onlyOnline)
 						{
-							leaderboard += user.getName() + " -> " + BotUtils.getPoints(user) + "\n";
+							int points = BotUtils.getPoints(user);
+							if (points > 0)
+							{
+								people += user.getName() + " -> " + BotUtils.getPoints(user) + "\n";
+							}
 						}
-						
+
 					}
-					BotUtils.sendMessage(channel, leaderboard);
+					builder.appendField("Leaderboard", people, true);
+					RequestBuffer.request(() -> event.getChannel().sendMessage(builder.build()));
 					return;
 				} else if (arguments[1].equals("give"))
 				{
