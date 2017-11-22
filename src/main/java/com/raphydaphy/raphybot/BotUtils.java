@@ -1,5 +1,6 @@
 package com.raphydaphy.raphybot;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ public class BotUtils
 {
 	public static String PREFIX = "!";
 	public static Map<Long, Integer> points = new HashMap<>();
+	public static Color messageColor = new Color(255, 0, 0);
 	
 	public static IDiscordClient getClient(String token)
 	{

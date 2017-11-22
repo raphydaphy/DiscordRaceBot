@@ -1,5 +1,6 @@
 package com.raphydaphy.raphybot;
 
+import java.awt.Color;
 import java.util.List;
 
 import sx.blah.discord.api.events.EventSubscriber;
@@ -39,11 +40,46 @@ public class BotEvents
 					BotUtils.sendMessage(event.getChannel(), content);
 					return;
 				}
-			} else if (arguments[0].equals("spam"))
+			} else if (arguments[0].equals("setcolor"))
 			{
-				for (int i = 0; i < 10; i++)
+				if (arguments.length == 4)
 				{
-					BotUtils.sendMessage(channel, "hello!");
+					int points = BotUtils.getPoints(event.getAuthor());
+					if (points >= 150)
+					{
+						try
+						{
+							int r = Integer.valueOf(arguments[1]);
+							int g = Integer.valueOf(arguments[2]);
+							int b = Integer.valueOf(arguments[3]);
+
+							BotUtils.messageColor = new Color(r, g, b);
+
+						} catch (NumberFormatException e)
+						{
+							BotUtils.sendMessage(channel, "Color values must be an integer!");
+							return;
+						}
+
+						EmbedBuilder builder = new EmbedBuilder();
+
+						builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
+								BotUtils.messageColor.getBlue());
+
+						builder.appendField("Color Changed!", "Operation consumed 150 points", true);
+
+						RequestBuffer.request(() -> event.getChannel().sendMessage(builder.build()));
+						
+						BotUtils.points.put(event.getAuthor().getLongID(), points - 150);
+					}
+					else
+					{
+						BotUtils.sendMessage(channel, "You don't have enough points to change the color! Minimum 150.");
+					}
+					return;
+				} else
+				{
+					BotUtils.sendMessage(channel, "Invalid arguments! Expected: \n`!setcolor [r] [g] [b]`");
 				}
 			} else if (arguments[0].equals("points"))
 			{
@@ -62,14 +98,13 @@ public class BotEvents
 
 					EmbedBuilder builder = new EmbedBuilder();
 
-					builder.withColor(255, 0, 0);
+					builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
+							BotUtils.messageColor.getBlue());
 					if (onlyOnline)
 					{
 						builder.withDescription("Only Online Users");
 					}
-					
 
-					
 					String people = "";
 					for (IUser user : RaphyBot.client.getUsers())
 					{
