@@ -6,6 +6,7 @@ import java.util.Map;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.RequestBuffer;
 
@@ -33,5 +34,14 @@ public class BotUtils
 				e.printStackTrace();
 			}
 		});
+	}
+	
+	public static int getPoints(IUser user)
+	{
+		if (points.containsKey(user.getLongID()))
+		{
+			return points.get(user.getLongID());
+		}
+		return 0;
 	}
 }
