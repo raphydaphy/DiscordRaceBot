@@ -9,6 +9,7 @@ public class Bet
 	private final IUser player;
 	private final int amount;
 	private final String icon;
+	private int progress;
 
 	private static final String[] icons = { ":cat:", ":hamster:", ":frog:", ":bear:", ":cow:", ":monkey:", ":camel:",
 			":panda_face:", ":baby_chick:", ":chicken:", ":bug:", ":beetle:", ":tropical_fish:", ":whale2:", ":ram:",
@@ -20,12 +21,12 @@ public class Bet
 			":turtle:", ":ant:", ":octopus:", ":whale:", ":cow2:", ":water_buffalo:", ":dragon:", ":dog2:", ":ox:",
 			":crocodile:", ":cat2:", ":octocat:" };
 
-	public Bet(IUser player, int amount)
+	public Bet(IUser player, int amount, Random rand)
 	{
 		this.player = player;
 		this.amount = amount;
-		Random random = new Random();
-		icon = icons[random.nextInt(icons.length)];
+		this.icon = icons[rand.nextInt(icons.length)];
+		this.progress = 0;
 	}
 
 	public IUser getPlayer()
@@ -41,5 +42,15 @@ public class Bet
 	public String getIcon()
 	{
 		return icon;
+	}
+	
+	public int getProgress()
+	{
+		return progress;
+	}
+	
+	public void setProgress(int progress)
+	{
+		this.progress = progress;
 	}
 }

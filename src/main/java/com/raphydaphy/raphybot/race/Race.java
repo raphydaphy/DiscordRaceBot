@@ -2,6 +2,7 @@ package com.raphydaphy.raphybot.race;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,9 +26,11 @@ public class Race
 	private IMessage raceInfo;
 	private Timer raceTimer;
 	private boolean isFinished;
+	private Random rand;
 
 	public Race(int time, IChannel channel)
 	{
+		rand = new Random();
 		bets = new ArrayList<>();
 		counter = time;
 		this.channel = channel;
@@ -35,7 +38,7 @@ public class Race
 		raceTimer = new Timer();
 		isFinished = false;
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
-		makeBet(RaphyBot.client.getOurUser(), (int)(Math.random() * 25));
+		makeBet(RaphyBot.client.getOurUser(), (int) (Math.random() * 25));
 	}
 
 	public void postNewMessage(EmbedObject message)
@@ -68,7 +71,7 @@ public class Race
 					return false;
 				}
 			}
-			bets.add(new Bet(player, amount));
+			bets.add(new Bet(player, amount, rand));
 			return true;
 		}
 		return false;
@@ -106,13 +109,13 @@ public class Race
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
-						betInfo += bet.getIcon() + " " +  bet.getPlayer().getName() + ": " + bet.getAmount() + "\n";
+						betInfo += bet.getIcon() + " " + bet.getPlayer().getName() + ": " + bet.getAmount() + "\n";
 					}
 					if (bets.isEmpty())
 					{
 						betInfo = "Noone has placed a bet yet! Use `!race bet [amount]` to be the first :D";
 					}
-					builder.withTitle("Race Betting Open!");
+					builder.withTitle("Betting Open");
 					builder.withDesc(counter + " seconds to go!");
 					builder.appendField("Bets", betInfo, false);
 					raceInfo.edit(builder.build());
@@ -120,12 +123,66 @@ public class Race
 			} else if (counter <= 0 && !raceStarted)
 			{
 				raceStarted = true;
-				EmbedBuilder builder = new EmbedBuilder();
-				builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-						BotUtils.messageColor.getBlue());
-				builder.appendField("Race Really Started!",
-						"The betting has closed for the race in " + channel + ". Race started!", true);
-				postNewMessage(builder.build());
+				counter = 0;
+			} else if (raceStarted && !isFinished)
+			{
+				counter++;
+				if (counter % 3 == 0)
+				{
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
+							BotUtils.messageColor.getBlue());
+					int pot = 0;
+					String betInfo = "";
+					IUser winner = null;
+					for (Bet bet : bets)
+					{
+
+						bet.setProgress(bet.getProgress() + rand.nextInt(3));
+
+						pot += bet.getAmount() * 2;
+						String progressLine = "";
+						for (int i = 0; i < 25; i++)
+						{
+							if (bet.getProgress() == i)
+							{
+								progressLine += bet.getIcon();
+							} else
+							{
+								progressLine += "=";
+							}
+						}
+						progressLine += "| " + bet.getPlayer().getName() + "\n";
+						betInfo += progressLine;
+
+						if (bet.getProgress() >= 24)
+						{
+							winner = bet.getPlayer();
+						}
+					}
+					if (winner != null)
+					{
+						isFinished = true;
+
+						BotUtils.addPoints(winner, pot);
+
+						builder.withAuthorName("Winner: " + winner.getName());
+						builder.withAuthorIcon(winner.getAvatarURL());
+					}
+					else
+					{
+						builder.withTitle("Race Active!");
+					}
+					builder.withDesc(betInfo + "\nPot: " + pot);
+					raceInfo.edit(builder.build());
+					
+					
+					if (winner != null)
+					{
+						BotUtils.sendMessage(channel, winner.getName() + " won the race for " + pot + " points!");
+					}
+
+				}
 			} else
 			{
 				raceTimer.cancel();
