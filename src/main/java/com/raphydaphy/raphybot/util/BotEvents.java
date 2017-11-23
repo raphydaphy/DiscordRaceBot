@@ -1,8 +1,9 @@
-package com.raphydaphy.raphybot;
+package com.raphydaphy.raphybot.util;
 
 import java.awt.Color;
 import java.util.List;
 
+import com.raphydaphy.raphybot.RaphyBot;
 import com.raphydaphy.raphybot.race.Race;
 
 import sx.blah.discord.api.events.EventSubscriber;

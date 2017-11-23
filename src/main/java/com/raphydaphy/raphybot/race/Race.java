@@ -6,8 +6,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.raphydaphy.raphybot.BotUtils;
 import com.raphydaphy.raphybot.RaphyBot;
+import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;

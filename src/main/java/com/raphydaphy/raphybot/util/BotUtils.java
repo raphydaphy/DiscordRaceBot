@@ -1,4 +1,4 @@
-package com.raphydaphy.raphybot;
+package com.raphydaphy.raphybot.util;
 
 import java.awt.Color;
 import java.util.HashMap;
