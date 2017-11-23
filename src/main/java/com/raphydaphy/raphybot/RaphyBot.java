@@ -7,9 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.raphydaphy.raphybot.command.Command;
+import com.raphydaphy.raphybot.command.HelpCommand;
+import com.raphydaphy.raphybot.command.PointsCommand;
+import com.raphydaphy.raphybot.command.RaceCommand;
+import com.raphydaphy.raphybot.command.SayCommand;
+import com.raphydaphy.raphybot.command.SetColorCommand;
 import com.raphydaphy.raphybot.util.BotEvents;
 import com.raphydaphy.raphybot.util.BotUtils;
 
@@ -18,6 +25,7 @@ import sx.blah.discord.api.IDiscordClient;
 public class RaphyBot
 {
 	public static final String SAVE_FILE = "data.txt";
+	public static Random rand;
 	public static IDiscordClient client;
 
 	public static void main(String[] args)
@@ -34,6 +42,14 @@ public class RaphyBot
 
 		readData();
 		new Timer().schedule(new SaveFunc(), 0, 30000);
+		
+		rand = new Random();
+		
+		Command.REGISTRY.add(new PointsCommand());
+		Command.REGISTRY.add(new RaceCommand());
+		Command.REGISTRY.add(new SayCommand());
+		Command.REGISTRY.add(new SetColorCommand());
+		Command.REGISTRY.add(new HelpCommand());
 	}
 
 	public static class SaveFunc extends TimerTask
