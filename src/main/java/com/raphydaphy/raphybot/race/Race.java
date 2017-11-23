@@ -106,7 +106,7 @@ public class Race
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
-						betInfo += bet.getPlayer().getName() + ": " + bet.getAmount() + "\n";
+						betInfo += bet.getIcon() + " " +  bet.getPlayer().getName() + ": " + bet.getAmount() + "\n";
 					}
 					if (bets.isEmpty())
 					{
