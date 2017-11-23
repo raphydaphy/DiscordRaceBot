@@ -13,13 +13,13 @@ public class Bet
 
 	private static final String[] icons = { ":cat:", ":hamster:", ":frog:", ":bear:", ":cow:", ":monkey:", ":camel:",
 			":panda_face:", ":baby_chick:", ":chicken:", ":bug:", ":beetle:", ":tropical_fish:", ":whale2:", ":ram:",
-			":tiger2:", ":goat:", ":pig2:", ":dragon_face:", ":dromedary_camel:", ":poodle:", ":squirrel:",
-			":smiling_imp:", ":woman:", ":smiley_cat:", ":skull:", ":snowman:", ":dog:", ":rabbit:", ":tiger:", ":pig:",
-			":boar:", ":horse:", ":sheep:", ":snake:", ":hatched_chick:", ":penguin:", ":bee:", ":snail:", ":fish:",
-			":dolphin:", ":rat:", ":rabbit2:", ":rooster:", ":mouse2:", ":blowfish:", ":leopard:", ":mouse:", ":wolf:",
-			":koala:", ":pig_nose:", ":monkey_face:", ":racehorse:", ":elephant:", ":bird:", ":hatching_chick:",
-			":turtle:", ":ant:", ":octopus:", ":whale:", ":cow2:", ":water_buffalo:", ":dragon:", ":dog2:", ":ox:",
-			":crocodile:", ":cat2:", ":octocat:" };
+			":tiger2:", ":goat:", ":pig2:", ":dragon_face:", ":dromedary_camel:", ":poodle:", ":smiling_imp:",
+			":woman:", ":smiley_cat:", ":skull:", ":snowman:", ":dog:", ":rabbit:", ":tiger:", ":pig:", ":boar:",
+			":horse:", ":sheep:", ":snake:", ":hatched_chick:", ":penguin:", ":bee:", ":snail:", ":fish:", ":dolphin:",
+			":rat:", ":rabbit2:", ":rooster:", ":mouse2:", ":blowfish:", ":leopard:", ":mouse:", ":wolf:", ":koala:",
+			":pig_nose:", ":monkey_face:", ":racehorse:", ":elephant:", ":bird:", ":hatching_chick:", ":turtle:",
+			":ant:", ":octopus:", ":whale:", ":cow2:", ":water_buffalo:", ":dragon:", ":dog2:", ":ox:", ":crocodile:",
+			":cat2:" };
 
 	public Bet(IUser player, int amount, Random rand)
 	{
@@ -43,12 +43,12 @@ public class Bet
 	{
 		return icon;
 	}
-	
+
 	public int getProgress()
 	{
 		return progress;
 	}
-	
+
 	public void setProgress(int progress)
 	{
 		this.progress = progress;

@@ -38,7 +38,12 @@ public class Race
 		raceTimer = new Timer();
 		isFinished = false;
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
-		makeBet(RaphyBot.client.getOurUser(), (int) (Math.random() * 25));
+
+		if (!makeBet(RaphyBot.client.getOurUser(),
+				(int) (Math.random() * (BotUtils.getPoints(RaphyBot.client.getOurUser()) + 1))))
+		{
+			bets.add(new Bet(RaphyBot.client.getOurUser(), (int) (Math.random() * 10), rand));
+		}
 	}
 
 	public void postNewMessage(EmbedObject message)
@@ -71,8 +76,11 @@ public class Race
 					return false;
 				}
 			}
-			bets.add(new Bet(player, amount, rand));
-			return true;
+			if (BotUtils.usePoints(player, amount))
+			{
+				bets.add(new Bet(player, amount, rand));
+				return true;
+			}
 		}
 		return false;
 	}
@@ -118,12 +126,32 @@ public class Race
 					builder.withTitle("Betting Open");
 					builder.withDesc(counter + " seconds to go!");
 					builder.appendField("Bets", betInfo, false);
-					raceInfo.edit(builder.build());
+
+					if (counter == 0)
+					{
+						postNewMessage(builder.build());
+					} else
+					{
+						raceInfo.edit(builder.build());
+					}
 				}
 			} else if (counter <= 0 && !raceStarted)
 			{
 				raceStarted = true;
-				counter = 0;
+				if (bets.size() >= 2)
+				{
+					counter = 0;
+				} else
+				{
+					BotUtils.sendMessage(channel, "Not enough players for the race to start! Minimum 2.");
+
+					for (Bet bet : bets)
+					{
+						BotUtils.addPoints(bet.getPlayer(), bet.getAmount());
+					}
+					isFinished = true;
+					raceTimer.cancel();
+				}
 			} else if (raceStarted && !isFinished)
 			{
 				counter++;
@@ -138,7 +166,7 @@ public class Race
 					for (Bet bet : bets)
 					{
 
-						bet.setProgress(bet.getProgress() + rand.nextInt(3));
+						bet.setProgress(Math.min(bet.getProgress() + rand.nextInt(5), 24));
 
 						pot += bet.getAmount() * 2;
 						String progressLine = "";
@@ -162,24 +190,23 @@ public class Race
 					}
 					if (winner != null)
 					{
-						isFinished = true;
 
 						BotUtils.addPoints(winner, pot);
 
 						builder.withAuthorName("Winner: " + winner.getName());
 						builder.withAuthorIcon(winner.getAvatarURL());
-					}
-					else
+					} else
 					{
 						builder.withTitle("Race Active!");
 					}
-					builder.withDesc(betInfo + "\nPot: " + pot);
+					builder.withDesc(betInfo + "Pot: " + pot);
 					raceInfo.edit(builder.build());
-					
-					
+
 					if (winner != null)
 					{
 						BotUtils.sendMessage(channel, winner.getName() + " won the race for " + pot + " points!");
+
+						isFinished = true;
 					}
 
 				}

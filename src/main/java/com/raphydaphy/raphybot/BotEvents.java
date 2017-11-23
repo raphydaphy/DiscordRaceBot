@@ -18,6 +18,7 @@ public class BotEvents
 	@EventSubscriber
 	public void onMessageReceived(MessageReceivedEvent event)
 	{
+		BotUtils.addPoints(event.getAuthor(), 1);
 		if (event.getMessage().getContent().startsWith(BotUtils.PREFIX))
 		{
 			long authorID = event.getAuthor().getLongID();
@@ -40,6 +41,11 @@ public class BotEvents
 				if (arguments.length > 1)
 				{
 					arguments[0] = "";
+					if (content.contains("@here") || content.contains("@everyone"))
+					{
+						BotUtils.sendMessage(channel, "no.");
+						return;
+					}
 					BotUtils.sendMessage(event.getChannel(), content);
 					return;
 				}
