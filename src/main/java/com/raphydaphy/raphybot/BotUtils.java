@@ -46,4 +46,30 @@ public class BotUtils
 		}
 		return 0;
 	}
+	
+	public static void addPoints(IUser user, int amount)
+	{
+		if (user != null)
+		{
+			if (!points.containsKey(user.getLongID()))
+			{
+				points.put(user.getLongID(), 0);
+			}
+				
+			points.put(user.getLongID(), getPoints(user) + amount);
+		}
+	}
+	
+	public static boolean usePoints(IUser user, int amount)
+	{
+		if (user != null)
+		{
+			if (getPoints(user) >= amount)
+			{
+				points.put(user.getLongID(), getPoints(user) - amount);
+				return true;
+			}
+		}
+		return false;
+	}
 }
