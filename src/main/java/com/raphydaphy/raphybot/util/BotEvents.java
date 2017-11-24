@@ -28,7 +28,7 @@ public class BotEvents
 			
 			for (Command command : Command.REGISTRY)
 			{
-				if (command.matches(arguments[0]))
+				if (command.matches(arguments[0].toLowerCase()))
 				{
 					command.run(shortArgs, event);
 					return;
