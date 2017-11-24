@@ -39,7 +39,7 @@ public class Race
 		if (!makeBet(RaphyBot.client.getOurUser(),
 				RaphyBot.rand.nextInt(BotUtils.getPoints(RaphyBot.client.getOurUser()) + 1) + 1))
 		{
-			bets.add(new Bet(RaphyBot.client.getOurUser(),RaphyBot.rand.nextInt(10), RaphyBot.rand));
+			bets.add(new Bet(RaphyBot.client.getOurUser(), RaphyBot.rand.nextInt(10), RaphyBot.rand));
 		}
 	}
 
@@ -97,12 +97,59 @@ public class Race
 		return isFinished;
 	}
 
+	public void setFinished()
+	{
+		this.isFinished = true;
+	}
+
+	public boolean isStarted()
+	{
+		return raceStarted;
+	}
+
+	public void refundAll()
+	{
+		for (Bet bet : bets)
+		{
+			if (bet.getAmount() > 0)
+			{
+				BotUtils.addPoints(bet.getPlayer(), bet.getAmount());
+			}
+		}
+	}
+
+	public boolean forceStart(boolean ignoreFail)
+	{
+		if (bets.size() >= 2)
+		{
+			counter = 0;
+			raceStarted = true;
+			
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
+					BotUtils.messageColor.getBlue());
+			builder.appendField("Race Started!", "Good luck...", true);
+			postNewMessage(builder.build());
+			return true;
+		} else if (!ignoreFail)
+		{
+
+			raceStarted = true;
+			refundAll();
+			isFinished = true;
+			raceTimer.cancel();
+
+		}
+		BotUtils.sendMessage(channel, "Not enough players for the race to start! Minimum 2.");
+		return false;
+	}
+
 	private class RaceUpdater extends TimerTask
 	{
 		@Override
 		public void run()
 		{
-			if (counter > 0 && !raceStarted)
+			if (counter > 0 && !raceStarted && !isFinished)
 			{
 				counter--;
 
@@ -114,7 +161,8 @@ public class Race
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
-						betInfo += bet.getIcon() + " " + bet.getPlayer().getDisplayName(channel.getGuild()) + ": " + bet.getAmount() + "\n";
+						betInfo += bet.getIcon() + " " + bet.getPlayer().getDisplayName(channel.getGuild()) + ": "
+								+ bet.getAmount() + "\n";
 					}
 					if (bets.isEmpty())
 					{
@@ -132,23 +180,9 @@ public class Race
 						raceInfo.edit(builder.build());
 					}
 				}
-			} else if (counter <= 0 && !raceStarted)
+			} else if (counter <= 0 && !raceStarted && !isFinished)
 			{
-				raceStarted = true;
-				if (bets.size() >= 2)
-				{
-					counter = 0;
-				} else
-				{
-					BotUtils.sendMessage(channel, "Not enough players for the race to start! Minimum 2.");
-
-					for (Bet bet : bets)
-					{
-						BotUtils.addPoints(bet.getPlayer(), bet.getAmount());
-					}
-					isFinished = true;
-					raceTimer.cancel();
-				}
+				forceStart(false);
 			} else if (raceStarted && !isFinished)
 			{
 				counter++;
@@ -172,7 +206,8 @@ public class Race
 					int top = Math.min(100, highestBet);
 					for (Bet bet : bets)
 					{
-						float percent = (bet.getAmount() >= top ? 100 : (((float)bet.getAmount() / (float)top) * 100));
+						float percent = (bet.getAmount() >= top ? 100
+								: (((float) bet.getAmount() / (float) top) * 100));
 						bet.setProgress(Math.min(bet.getProgress() + RaphyBot.rand.nextInt(5), 24));
 
 						pot += bet.getAmount() * 2;
@@ -187,7 +222,8 @@ public class Race
 								progressLine += "=";
 							}
 						}
-						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + percent + "%) "+"\n";
+						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + percent
+								+ "%) " + "\n";
 						betInfo += progressLine;
 
 						if (bet.getProgress() >= 24)
@@ -196,7 +232,7 @@ public class Race
 							winnerPercent = percent;
 						}
 					}
-					int winnings = (int)(pot * (winnerPercent / 100));
+					int winnings = (int) (pot * (winnerPercent / 100));
 					if (winner != null)
 					{
 						BotUtils.addPoints(winner, winnings);
@@ -212,7 +248,8 @@ public class Race
 
 					if (winner != null)
 					{
-						BotUtils.sendMessage(channel, winner.getDisplayName(channel.getGuild()) + " won the race for " + winnings + " points!");
+						BotUtils.sendMessage(channel, winner.getDisplayName(channel.getGuild()) + " won the race for "
+								+ winnings + " points!");
 
 						isFinished = true;
 					}

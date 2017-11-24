@@ -4,6 +4,7 @@ import com.raphydaphy.raphybot.race.Race;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class RaceCommand extends Command
@@ -56,6 +57,36 @@ public class RaceCommand extends Command
 							"A race is already ongoing in " + event.getChannel().mention() + " !");
 					return;
 				}
+			} else if (arguments[0].toLowerCase().equals("cancel"))
+			{
+				if (BotUtils.getRace(event.getChannel()) != null && !BotUtils.getRace(event.getChannel()).isStarted()
+						&& event.getAuthor().getPermissionsForGuild(event.getGuild())
+								.contains(Permissions.ADMINISTRATOR))
+				{
+					BotUtils.getRace(event.getChannel()).setFinished();
+					BotUtils.setRace(event.getChannel(), null);
+					BotUtils.sendMessage(event.getChannel(),
+							event.getAuthor().getDisplayName(event.getGuild()) + " cancelled the race!");
+				}
+			} else if (arguments[0].toLowerCase().equals("force"))
+			{
+				if (BotUtils.getRace(event.getChannel()) != null && !BotUtils.getRace(event.getChannel()).isStarted())
+				{
+					if (BotUtils.getPoints(event.getAuthor()) >= 50)
+					{
+						if (BotUtils.getRace(event.getChannel()).forceStart(true))
+						{
+							BotUtils.usePoints(event.getAuthor(), 50);
+							BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild())
+									+ " force started a race in " + event.getChannel().mention() + " for 50 points!");
+							return;
+						}
+					} else
+					{
+						BotUtils.sendMessage(event.getChannel(), "You need at least 50 points to force start a race!");
+						return;
+					}
+				}
 			} else if (arguments[0].toLowerCase().equals("bet"))
 			{
 				if (BotUtils.getRace(event.getChannel()) != null)
@@ -104,7 +135,9 @@ public class RaceCommand extends Command
 				+ BotUtils.PREFIX + getCommand()
 				+ " start [time]`, where the time you specify is the length of time allowed to place bets. The maximum this can be set to is 120, and all units are in seconds. Once a race has began, you can use `"
 				+ BotUtils.PREFIX + getCommand()
-				+ " bet [amount]` to bet your points in favor of yourself winning the race. You can only bet once per race, so place your bets wisely.";
+				+ " bet [amount]` to bet your points in favor of yourself winning the race. You can only bet once per race, so place your bets wisely.\n\nAdministrators can cancel the current race as long as the betting has not closed yet, using `" + BotUtils.PREFIX + getCommand()
+				+ " cancel`, and any user can forcefully start a race during the betting period using `"+ BotUtils.PREFIX + getCommand()
+				+ " force`, but 50 points will be consumed when running the command, so use it only when you must.";
 	}
 
 }
