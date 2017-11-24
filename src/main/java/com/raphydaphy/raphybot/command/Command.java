@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
 
 public abstract class Command
 {
@@ -33,7 +34,7 @@ public abstract class Command
 	}
 
 	public abstract void run(String[] arguments, MessageReceivedEvent event);
-	public abstract String getInfo();
+	public abstract String getInfo(IGuild guild);
 	
 	public static String getContent(String[] arguments)
 	{

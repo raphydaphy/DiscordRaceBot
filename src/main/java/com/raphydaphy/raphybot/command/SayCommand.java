@@ -3,6 +3,7 @@ package com.raphydaphy.raphybot.command;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
 
 public class SayCommand extends Command
 {
@@ -29,9 +30,9 @@ public class SayCommand extends Command
 	}
 
 	@Override
-	public String getInfo()
+	public String getInfo(IGuild guild)
 	{
-		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + BotUtils.PREFIX + getCommand() + " [message] to invoke it.`";
+		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + BotUtils.getPrefix(guild) + getCommand() + " [message] to invoke it.`";
 	}
 
 }

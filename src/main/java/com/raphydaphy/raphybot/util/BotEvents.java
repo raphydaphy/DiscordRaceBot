@@ -15,7 +15,7 @@ public class BotEvents
 		{
 			BotUtils.addPoints(event.getAuthor(), 1);
 		}
-		if (event.getMessage().getContent().startsWith(BotUtils.PREFIX))
+		if (event.getMessage().getContent().startsWith(Character.toString(BotUtils.getPrefix(event.getGuild()))))
 		{
 			String[] arguments = event.getMessage().getContent().split(" ");
 			String[] shortArgs = new String[arguments.length - 1];

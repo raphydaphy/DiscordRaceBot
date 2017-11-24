@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class SetColorCommand extends Command
@@ -29,7 +30,7 @@ public class SetColorCommand extends Command
 					int g = Integer.valueOf(arguments[1]);
 					int b = Integer.valueOf(arguments[2]);
 
-					BotUtils.messageColor = new Color(r, g, b);
+					BotUtils.colors.put(event.getGuild().getLongID(), new Color(r, g, b));
 
 				} catch (NumberFormatException e)
 				{
@@ -39,8 +40,8 @@ public class SetColorCommand extends Command
 
 				EmbedBuilder builder = new EmbedBuilder();
 
-				builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-						BotUtils.messageColor.getBlue());
+				builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
+						BotUtils.getColor(event.getGuild()).getBlue());
 
 				builder.appendField("Color Changed!", "Operation consumed 150 points", true);
 
@@ -56,15 +57,15 @@ public class SetColorCommand extends Command
 		} else
 		{
 			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments! Expected: \n`" + BotUtils.PREFIX + getCommand() + " [r] [g] [b]`");
+					"Invalid arguments! Expected: \n`" + BotUtils.getPrefix(event.getGuild()) + getCommand() + " [r] [g] [b]`");
 		}
 	}
 
 	@Override
-	public String getInfo()
+	public String getInfo(IGuild guild)
 	{
 		return "For the cost of 150 points, you can use this command to change the color of all bot messages. The format is `"
-				+ BotUtils.PREFIX + getCommand() + " [r] [g] [b]`";
+				+ BotUtils.getPrefix(guild) + getCommand() + " [r] [g] [b]`";
 	}
 
 }

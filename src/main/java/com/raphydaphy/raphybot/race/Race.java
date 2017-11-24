@@ -126,8 +126,8 @@ public class Race
 			raceStarted = true;
 			
 			EmbedBuilder builder = new EmbedBuilder();
-			builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-					BotUtils.messageColor.getBlue());
+			builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
+					BotUtils.getColor(channel.getGuild()).getBlue());
 			builder.appendField("Race Started!", "Good luck...", true);
 			postNewMessage(builder.build());
 			return true;
@@ -156,8 +156,8 @@ public class Race
 				if (counter % 5 == 0 && raceInfo != null)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-							BotUtils.messageColor.getBlue());
+					builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
+							BotUtils.getColor(channel.getGuild()).getBlue());
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
@@ -189,8 +189,8 @@ public class Race
 				if (counter % 3 == 0)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-							BotUtils.messageColor.getBlue());
+					builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
+							BotUtils.getColor(channel.getGuild()).getBlue());
 					int pot = 0;
 					float winnerPercent = 0;
 					String betInfo = "";
@@ -222,7 +222,7 @@ public class Race
 								progressLine += "=";
 							}
 						}
-						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + percent
+						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + (int)percent
 								+ "%) " + "\n";
 						betInfo += progressLine;
 

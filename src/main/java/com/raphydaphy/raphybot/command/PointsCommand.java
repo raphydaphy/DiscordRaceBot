@@ -9,6 +9,7 @@ import com.raphydaphy.raphybot.RaphyBot;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.EmbedBuilder;
@@ -41,8 +42,8 @@ public class PointsCommand extends Command
 
 			EmbedBuilder builder = new EmbedBuilder();
 
-			builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
-					BotUtils.messageColor.getBlue());
+			builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
+					BotUtils.getColor(event.getGuild()).getBlue());
 			if (onlyOnline)
 			{
 				builder.withDescription("Only Online Users");
@@ -117,16 +118,16 @@ public class PointsCommand extends Command
 		} else
 		{
 			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments. Valid options for `" + BotUtils.PREFIX + getCommand() + "` are:\n`amount`, `lb`, `give`");
+					"Invalid arguments. Valid options for `" + BotUtils.getPrefix(event.getGuild()) + getCommand() + "` are:\n`amount`, `lb`, `give`");
 			return;
 		}
 
 	}
 
 	@Override
-	public String getInfo()
+	public String getInfo(IGuild guild)
 	{
-		return "The `" + BotUtils.PREFIX + getCommand()
+		return "The `" + BotUtils.getPrefix(guild) + getCommand()
 				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `!points lb` displays a leaderboard with the richest users of all time, and `!points give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
 	}
 }

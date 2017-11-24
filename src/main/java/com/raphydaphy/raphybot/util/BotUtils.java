@@ -10,16 +10,42 @@ import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.RequestBuffer;
 
 public class BotUtils
 {
-	public static String PREFIX = "!";
+	// Guild ID -> Prefix used to summon the bot in that guild
+	public static Map<Long, Character> prefixes = new HashMap<>();
+
+	// User ID -> amount of points the user has
 	public static Map<Long, Integer> points = new HashMap<>();
+
+	// Channel ID -> current race ongoing in the channel
 	public static Map<Long, Race> races = new HashMap<>();
-	public static Color messageColor = new Color(0, 0, 0);
+
+	// Guild ID -> color used for messages in that guild
+	public static Map<Long, Color> colors = new HashMap<>();
+
+	public static Color getColor(IGuild guild)
+	{
+		if (!colors.containsKey(guild.getLongID()))
+		{
+			colors.put(guild.getLongID(), new Color(0, 0, 0));
+		}
+		return colors.get(guild.getLongID());
+	}
+	
+	public static char getPrefix(IGuild guild)
+	{
+		if (!prefixes.containsKey(guild.getLongID()))
+		{
+			prefixes.put(guild.getLongID(), '$');
+		}
+		return prefixes.get(guild.getLongID());
+	}
 
 	public static IDiscordClient getClient(String token)
 	{
