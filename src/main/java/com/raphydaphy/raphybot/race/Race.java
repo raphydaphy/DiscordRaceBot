@@ -64,7 +64,7 @@ public class Race
 
 	public boolean makeBet(IUser player, int amount)
 	{
-		if (!raceStarted)
+		if (!raceStarted && amount > 0)
 		{
 			for (Bet bet : bets)
 			{

@@ -1,5 +1,8 @@
 package com.raphydaphy.raphybot.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.raphydaphy.raphybot.RaphyBot;
@@ -7,7 +10,6 @@ import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.RequestBuffer;
@@ -17,7 +19,7 @@ public class PointsCommand extends Command
 
 	public PointsCommand()
 	{
-		super("points");
+		super("points", "Used to manage your point balance");
 	}
 
 	@Override
@@ -47,7 +49,21 @@ public class PointsCommand extends Command
 			}
 
 			String people = "";
+			Comparator<IUser> userSorter=new Comparator<IUser>()
+			{
+				@Override
+				public int compare(IUser o1, IUser o2) 
+				{
+				    return BotUtils.getPoints(o2) -  BotUtils.getPoints(o1);
+				}
+			};
+			List<IUser> users = new ArrayList<>();
 			for (IUser user : RaphyBot.client.getUsers())
+			{
+				users.add(user);
+			}
+			Collections.sort(users, userSorter);
+			for (IUser user : users)
 			{
 				if ((!user.getPresence().getStatus().equals(StatusType.OFFLINE)) || !onlyOnline)
 				{
@@ -68,7 +84,7 @@ public class PointsCommand extends Command
 			return;
 		} else if (arguments[0].toLowerCase().equals("give"))
 		{
-			if (event.getAuthor().getPermissionsForGuild(event.getGuild()).contains(Permissions.ADMINISTRATOR))
+			if (event.getAuthor().getStringID().equals("231774499027156993"))
 			{
 				if (arguments.length == 3)
 				{
@@ -110,6 +126,7 @@ public class PointsCommand extends Command
 	@Override
 	public String getInfo()
 	{
-		return "The `" + BotUtils.PREFIX + getCommand() + "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `!points lb` displays a leaderboard with the richest users of all time, and `!points give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
+		return "The `" + BotUtils.PREFIX + getCommand()
+				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `!points lb` displays a leaderboard with the richest users of all time, and `!points give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
 	}
 }

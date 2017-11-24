@@ -8,11 +8,13 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 public abstract class Command
 {
 	private final String command;
+	private final String shortDesc;
 	public static final List<Command> REGISTRY = new ArrayList<>();
 
-	public Command(String command)
+	public Command(String command, String shortDesc)
 	{
 		this.command = command;
+		this.shortDesc = shortDesc;
 	}
 
 	public boolean matches(String argument)
@@ -23,6 +25,11 @@ public abstract class Command
 	public String getCommand()
 	{
 		return command;
+	}
+	
+	public String getShortDesc()
+	{
+		return shortDesc;
 	}
 
 	public abstract void run(String[] arguments, MessageReceivedEvent event);

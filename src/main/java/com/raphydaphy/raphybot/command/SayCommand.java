@@ -9,7 +9,7 @@ public class SayCommand extends Command
 
 	public SayCommand()
 	{
-		super("say");
+		super("say", "What do you think this does?");
 	}
 
 	@Override

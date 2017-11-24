@@ -11,7 +11,7 @@ public class RaceCommand extends Command
 
 	public RaceCommand()
 	{
-		super("race");
+		super("race", "Have a race, to give you a sense of pride and acomplishment.");
 	}
 
 	@Override

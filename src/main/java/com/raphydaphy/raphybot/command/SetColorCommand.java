@@ -12,7 +12,7 @@ public class SetColorCommand extends Command
 
 	public SetColorCommand()
 	{
-		super("setcolor");
+		super("setcolor", "Changes the color of bot text boxes.");
 	}
 
 	@Override

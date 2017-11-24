@@ -10,7 +10,7 @@ public class HelpCommand extends Command
 
 	public HelpCommand()
 	{
-		super("help");
+		super("help", "Lists the avalable commands and what they do.");
 	}
 
 	@Override
