@@ -37,7 +37,7 @@ public class Race
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
 
 		if (!makeBet(RaphyBot.client.getOurUser(),
-				RaphyBot.rand.nextInt(BotUtils.getPoints(RaphyBot.client.getOurUser()) + 1)))
+				RaphyBot.rand.nextInt(BotUtils.getPoints(RaphyBot.client.getOurUser()) + 1) + 1))
 		{
 			bets.add(new Bet(RaphyBot.client.getOurUser(),RaphyBot.rand.nextInt(10), RaphyBot.rand));
 		}
@@ -158,11 +158,21 @@ public class Race
 					builder.withColor(BotUtils.messageColor.getRed(), BotUtils.messageColor.getGreen(),
 							BotUtils.messageColor.getBlue());
 					int pot = 0;
+					float winnerPercent = 0;
 					String betInfo = "";
 					IUser winner = null;
+					int highestBet = 0;
 					for (Bet bet : bets)
 					{
-
+						if (bet.getAmount() > highestBet)
+						{
+							highestBet = bet.getAmount();
+						}
+					}
+					int top = Math.min(100, highestBet);
+					for (Bet bet : bets)
+					{
+						float percent = (bet.getAmount() >= top ? 100 : (((float)bet.getAmount() / (float)top) * 100));
 						bet.setProgress(Math.min(bet.getProgress() + RaphyBot.rand.nextInt(5), 24));
 
 						pot += bet.getAmount() * 2;
@@ -177,18 +187,19 @@ public class Race
 								progressLine += "=";
 							}
 						}
-						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + "\n";
+						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + percent + "%) "+"\n";
 						betInfo += progressLine;
 
 						if (bet.getProgress() >= 24)
 						{
 							winner = bet.getPlayer();
+							winnerPercent = percent;
 						}
 					}
+					int winnings = (int)(pot * (winnerPercent / 100));
 					if (winner != null)
 					{
-
-						BotUtils.addPoints(winner, pot);
+						BotUtils.addPoints(winner, winnings);
 
 						builder.withAuthorName("Winner: " + winner.getDisplayName(channel.getGuild()));
 						builder.withAuthorIcon(winner.getAvatarURL());
@@ -201,7 +212,7 @@ public class Race
 
 					if (winner != null)
 					{
-						BotUtils.sendMessage(channel, winner.getDisplayName(channel.getGuild()) + " won the race for " + pot + " points!");
+						BotUtils.sendMessage(channel, winner.getDisplayName(channel.getGuild()) + " won the race for " + winnings + " points!");
 
 						isFinished = true;
 					}

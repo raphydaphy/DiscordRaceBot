@@ -26,7 +26,7 @@ public class HelpCommand extends Command
 			String commandInfo = "";
 			for (Command command : Command.REGISTRY)
 			{
-				commandInfo += BotUtils.PREFIX + command.getCommand() + ": " + " does something useful!\n";
+				commandInfo += BotUtils.PREFIX + command.getCommand() + ": " + " " + command.getShortDesc() +"\n";
 			}
 			builder.appendField("Avalable Commands", commandInfo, true);
 			matches = true;

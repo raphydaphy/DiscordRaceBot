@@ -16,7 +16,7 @@ import sx.blah.discord.util.RequestBuffer;
 
 public class BotUtils
 {
-	public static String PREFIX = "!";
+	public static String PREFIX = "$";
 	public static Map<Long, Integer> points = new HashMap<>();
 	public static Map<Long, Race> races = new HashMap<>();
 	public static Color messageColor = new Color(0, 0, 0);
