@@ -26,11 +26,7 @@ public class PointsCommand extends Command
 	@Override
 	public void run(String[] arguments, MessageReceivedEvent event)
 	{
-		int authorPoints = 0;
-		if (BotUtils.points.containsKey(event.getAuthor().getLongID()))
-		{
-			authorPoints = BotUtils.points.get(event.getAuthor().getLongID());
-		}
+		int authorPoints = BotUtils.getData(event.getGuild()).getPoints(event.getAuthor());
 		if (arguments.length == 0 || arguments[0].toLowerCase().equals("amount"))
 		{
 			BotUtils.sendMessage(event.getChannel(),
@@ -42,8 +38,9 @@ public class PointsCommand extends Command
 
 			EmbedBuilder builder = new EmbedBuilder();
 
-			builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
-					BotUtils.getColor(event.getGuild()).getBlue());
+			builder.withColor(BotUtils.getData(event.getChannel().getGuild()).getColor().getRed(),
+					BotUtils.getData(event.getChannel().getGuild()).getColor().getGreen(),
+					BotUtils.getData(event.getChannel().getGuild()).getColor().getBlue());
 			if (onlyOnline)
 			{
 				builder.withDescription("Only Online Users");
@@ -55,7 +52,7 @@ public class PointsCommand extends Command
 				@Override
 				public int compare(IUser o1, IUser o2) 
 				{
-				    return BotUtils.getPoints(o2) -  BotUtils.getPoints(o1);
+				    return BotUtils.getData(event.getGuild()).getPoints(o2) -  BotUtils.getData(event.getGuild()).getPoints(o1);
 				}
 			};
 			List<IUser> users = new ArrayList<>();
@@ -68,10 +65,10 @@ public class PointsCommand extends Command
 			{
 				if ((!user.getPresence().getStatus().equals(StatusType.OFFLINE)) || !onlyOnline)
 				{
-					int points = BotUtils.getPoints(user);
+					int points = BotUtils.getData(event.getGuild()).getPoints(user);
 					if (points > 0)
 					{
-						people += user.getName() + " -> " + BotUtils.getPoints(user) + "\n";
+						people += user.getName() + " -> " + BotUtils.getData(event.getGuild()).getPoints(user) + "\n";
 					}
 				}
 
@@ -97,7 +94,7 @@ public class PointsCommand extends Command
 						{
 							try
 							{
-								BotUtils.addPoints(user, Integer.valueOf(arguments[2]));
+								BotUtils.getData(event.getGuild()).addPoints(user, Integer.valueOf(arguments[2]));
 								BotUtils.sendMessage(event.getChannel(),
 										"Given " + arguments[2] + " points to " + arguments[1]);
 							} catch (NumberFormatException e)
@@ -118,7 +115,7 @@ public class PointsCommand extends Command
 		} else
 		{
 			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments. Valid options for `" + BotUtils.getPrefix(event.getGuild()) + getCommand() + "` are:\n`amount`, `lb`, `give`");
+					"Invalid arguments. Valid options for `" + BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + "` are:\n`amount`, `lb`, `give`");
 			return;
 		}
 
@@ -127,7 +124,7 @@ public class PointsCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "The `" + BotUtils.getPrefix(guild) + getCommand()
-				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `!points lb` displays a leaderboard with the richest users of all time, and `!points give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
+		return "The `" + BotUtils.getData(guild).getPrefix() + getCommand()
+				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `" +  BotUtils.getData(guild).getPrefix() + getCommand() + " lb` displays a leaderboard with the richest users of all time, and `" +  BotUtils.getData(guild).getPrefix() + getCommand() + " give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
 	}
 }

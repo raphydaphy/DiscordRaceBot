@@ -18,8 +18,9 @@ public class HelpCommand extends Command
 	public void run(String[] arguments, MessageReceivedEvent event)
 	{
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
-				BotUtils.getColor(event.getGuild()).getBlue());
+		builder.withColor(BotUtils.getData(event.getChannel().getGuild()).getColor().getRed(),
+				BotUtils.getData(event.getChannel().getGuild()).getColor().getGreen(),
+				BotUtils.getData(event.getChannel().getGuild()).getColor().getBlue());
 
 		boolean matches = false;
 		if (arguments.length == 0)
@@ -27,7 +28,8 @@ public class HelpCommand extends Command
 			String commandInfo = "";
 			for (Command command : Command.REGISTRY)
 			{
-				commandInfo += BotUtils.getPrefix(event.getGuild()) + command.getCommand() + ": " + " " + command.getShortDesc() +"\n";
+				commandInfo += BotUtils.getData(event.getGuild()).getPrefix() + command.getCommand() + ": " + " "
+						+ command.getShortDesc() + "\n";
 			}
 			builder.appendField("Avalable Commands", commandInfo, true);
 			matches = true;
@@ -45,7 +47,8 @@ public class HelpCommand extends Command
 		}
 		if (!matches)
 		{
-			builder.appendField("Invalid Arguments", "You either tried to lookup an invalid command, or you used too many arguments.", true);
+			builder.appendField("Invalid Arguments",
+					"You either tried to lookup an invalid command, or you used too many arguments.", true);
 		}
 		BotUtils.sendMessage(event.getChannel(), builder.build());
 	}
@@ -53,9 +56,9 @@ public class HelpCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "`" + BotUtils.getPrefix(guild) + getCommand()
+		return "`" + BotUtils.getData(guild).getPrefix() + getCommand()
 				+ "` can be used to gain information about a command. Using the command on its own will list all possible commands. If you want to learn about a specific commmand, use `"
-				+ BotUtils.getPrefix(guild) + getCommand() + " [command]` to get some information.";
+				+ BotUtils.getData(guild).getPrefix() + getCommand() + " [command]` to get some information.";
 	}
 
 }

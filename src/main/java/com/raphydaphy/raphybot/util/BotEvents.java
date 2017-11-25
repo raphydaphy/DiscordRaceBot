@@ -13,9 +13,9 @@ public class BotEvents
 	{
 		if (!event.getAuthor().isBot() && RaphyBot.rand.nextInt(7) == 1)
 		{
-			BotUtils.addPoints(event.getAuthor(), 1);
+			BotUtils.getData(event.getGuild()).addPoints(event.getAuthor(), 1);
 		}
-		if (event.getMessage().getContent().startsWith(Character.toString(BotUtils.getPrefix(event.getGuild()))))
+		if (event.getMessage().getContent().startsWith(Character.toString(BotUtils.getData(event.getGuild()).getPrefix())))
 		{
 			String[] arguments = event.getMessage().getContent().split(" ");
 			String[] shortArgs = new String[arguments.length - 1];

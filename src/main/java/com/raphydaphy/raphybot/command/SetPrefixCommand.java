@@ -24,7 +24,7 @@ public class SetPrefixCommand extends Command
 				char[] chars = arguments[0].toCharArray();
 				if (chars.length == 1)
 				{
-					BotUtils.prefixes.put(event.getGuild().getLongID(), chars[0]);
+					BotUtils.getData(event.getGuild()).setPrefix(chars[0]);
 					BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild()) + " set the prefix to `" + chars[0] + "`");
 				} else
 				{
@@ -44,7 +44,7 @@ public class SetPrefixCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "Used to change the prefix used to summon me! Default is `$`, and Administrators on the server can use `"
-				+ BotUtils.getPrefix(guild) + getCommand() + " [prefix]` to change it!";
+				+ BotUtils.getData(guild).getPrefix() + getCommand() + " [prefix]` to change it!";
 	}
 
 }

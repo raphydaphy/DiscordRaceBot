@@ -21,16 +21,14 @@ public class SetColorCommand extends Command
 	{
 		if (arguments.length == 3)
 		{
-			int points = BotUtils.getPoints(event.getAuthor());
-			if (points >= 150)
+			if (BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), 150))
 			{
 				try
 				{
 					int r = Integer.valueOf(arguments[0]);
 					int g = Integer.valueOf(arguments[1]);
 					int b = Integer.valueOf(arguments[2]);
-
-					BotUtils.colors.put(event.getGuild().getLongID(), new Color(r, g, b));
+					BotUtils.getData(event.getGuild()).setColor(new Color(r,g,b));
 
 				} catch (NumberFormatException e)
 				{
@@ -40,14 +38,13 @@ public class SetColorCommand extends Command
 
 				EmbedBuilder builder = new EmbedBuilder();
 
-				builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
-						BotUtils.getColor(event.getGuild()).getBlue());
+				builder.withColor(BotUtils.getData(event.getChannel().getGuild()).getColor().getRed(),
+						BotUtils.getData(event.getChannel().getGuild()).getColor().getGreen(),
+						BotUtils.getData(event.getChannel().getGuild()).getColor().getBlue());
 
 				builder.appendField("Color Changed!", "Operation consumed 150 points", true);
 
 				BotUtils.sendMessage(event.getChannel(), builder.build());
-
-				BotUtils.points.put(event.getAuthor().getLongID(), points - 150);
 			} else
 			{
 				BotUtils.sendMessage(event.getChannel(),
@@ -57,7 +54,7 @@ public class SetColorCommand extends Command
 		} else
 		{
 			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments! Expected: \n`" + BotUtils.getPrefix(event.getGuild()) + getCommand() + " [r] [g] [b]`");
+					"Invalid arguments! Expected: \n`" + BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + " [r] [g] [b]`");
 		}
 	}
 
@@ -65,7 +62,7 @@ public class SetColorCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "For the cost of 150 points, you can use this command to change the color of all bot messages. The format is `"
-				+ BotUtils.getPrefix(guild) + getCommand() + " [r] [g] [b]`";
+				+  BotUtils.getData(guild).getPrefix() + getCommand() + " [r] [g] [b]`";
 	}
 
 }

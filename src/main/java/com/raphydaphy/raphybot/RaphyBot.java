@@ -1,17 +1,18 @@
 package com.raphydaphy.raphybot;
 
-import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.raphydaphy.raphybot.command.Command;
 import com.raphydaphy.raphybot.command.HelpCommand;
 import com.raphydaphy.raphybot.command.PointsCommand;
@@ -19,6 +20,7 @@ import com.raphydaphy.raphybot.command.RaceCommand;
 import com.raphydaphy.raphybot.command.SayCommand;
 import com.raphydaphy.raphybot.command.SetColorCommand;
 import com.raphydaphy.raphybot.command.SetPrefixCommand;
+import com.raphydaphy.raphybot.data.GuildData;
 import com.raphydaphy.raphybot.util.BotEvents;
 import com.raphydaphy.raphybot.util.BotUtils;
 
@@ -26,7 +28,7 @@ import sx.blah.discord.api.IDiscordClient;
 
 public class RaphyBot
 {
-	public static final String SAVE_FILE = "data.txt";
+	public static final String SAVE_FOLDER = "data/";
 	public static Random rand;
 	public static IDiscordClient client;
 
@@ -60,42 +62,28 @@ public class RaphyBot
 		@Override
 		public void run()
 		{
+			JsonObject json = new JsonObject();
+			for (long longID : BotUtils.guilds.keySet())
+			{
+				String stringID = client.getGuildByID(longID).getStringID();
+
+				json.add(stringID, BotUtils.guilds.get(longID).toJson());
+
+			}
+
+			System.out.println(json.toString());
 			try
 			{
-				BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE, false));
-
-				writer.write("# Prefixes");
-				writer.newLine();
-
-				for (long guildID : BotUtils.prefixes.keySet())
-				{
-					writer.write(guildID + "=" + BotUtils.prefixes.get(guildID));
-					writer.newLine();
-				}
-
-				writer.write("# Points");
-				writer.newLine();
-				for (long userID : BotUtils.points.keySet())
-				{
-					writer.write(userID + "=" + BotUtils.points.get(userID));
-					writer.newLine();
-				}
-
-				writer.write("# Colors");
-				writer.newLine();
-				for (long guildID : BotUtils.colors.keySet())
-				{
-					writer.write(guildID + "=" + BotUtils.colors.get(guildID).getRed() + ","
-							+ BotUtils.colors.get(guildID).getGreen() + "," + BotUtils.colors.get(guildID).getBlue());
-					writer.newLine();
-				}
-
+				FileWriter writer = new FileWriter(SAVE_FOLDER + "guild_data.json");
+				writer.write(json.toString());
+				writer.flush();
 				writer.close();
-				System.out.println("Saved data!");
 			} catch (IOException e)
 			{
+				System.err.print("There was an issue when saving guild data! Printing stack trace...");
 				e.printStackTrace();
 			}
+			System.out.println("Saved Data!");
 		}
 	}
 
@@ -103,59 +91,21 @@ public class RaphyBot
 	{
 		try
 		{
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(SAVE_FILE));
-			List<String> lines = new ArrayList<String>();
-			String line = null;
-			while ((line = bufferedReader.readLine()) != null)
-			{
-				lines.add(line);
-			}
-			bufferedReader.close();
-			int section = 0;
-			for (String entry : lines.toArray(new String[lines.size()]))
-			{
-				if (entry.startsWith("#"))
-				{
-					section++;
-				} else
-				{
-					String[] parts = entry.split("=");
-					if (parts.length != 2)
-					{
-						System.err.println("Malformed save file found, skipping corrupt entry.");
-						continue;
-					}
-					long id = Long.valueOf(parts[0]);
-					switch(section)
-					{
-					case 1:
-						
-						char prefix = (parts[1]).toCharArray()[0];
-						BotUtils.prefixes.put(id, prefix);
-						break;
-					case 2:
-						int points = Integer.valueOf(parts[1]);
-						BotUtils.points.put(id, points);
-						break;
-					case 3:
-						String[] rgb = parts[1].split(",");
-						Color color = new Color(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
-						
-						BotUtils.colors.put(id, color);
-						break;
-					}
-					
-				}
-			}
+			BufferedReader br = new BufferedReader(new FileReader(SAVE_FOLDER + "guild_data.json"));
+			JsonParser parser = new JsonParser();
+			JsonObject jsonObject = parser.parse(br).getAsJsonObject();
 
+			for (Map.Entry<String, JsonElement> guildJson : jsonObject.entrySet())
+			{
+				BotUtils.guilds.put(Long.valueOf(guildJson.getKey()),
+						GuildData.fromJson(guildJson.getValue().getAsJsonObject()));
+
+			}
 			System.out.println("Loaded data!");
-		} catch (IOException e)
+
+		} catch (FileNotFoundException e)
 		{
-			e.printStackTrace();
-		} catch (NumberFormatException e)
-		{
-			System.err.println("Invalid data found in save file, data loading process abruptly stopped.");
-			e.printStackTrace();
+			System.out.println("Bot was used for the first time or the save file was deleted!");
 		}
 	}
 }

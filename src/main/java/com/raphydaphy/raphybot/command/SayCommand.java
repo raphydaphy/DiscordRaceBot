@@ -18,7 +18,6 @@ public class SayCommand extends Command
 	{
 		if (arguments.length > 0)
 		{
-			arguments[0] = "";
 			if (getContent(arguments).contains("@here") || getContent(arguments).contains("@everyone"))
 			{
 				BotUtils.sendMessage(event.getChannel(), "No.");
@@ -32,7 +31,7 @@ public class SayCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + BotUtils.getPrefix(guild) + getCommand() + " [message] to invoke it.`";
+		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + BotUtils.getData(guild).getPrefix() + getCommand() + " [message] to invoke it.`";
 	}
 
 }

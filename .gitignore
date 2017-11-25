@@ -6,6 +6,7 @@
 /command_data/
 /counts/
 data.txt
+data/*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

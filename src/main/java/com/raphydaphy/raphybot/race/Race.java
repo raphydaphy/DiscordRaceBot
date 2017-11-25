@@ -37,7 +37,7 @@ public class Race
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
 
 		if (!makeBet(RaphyBot.client.getOurUser(),
-				RaphyBot.rand.nextInt(BotUtils.getPoints(RaphyBot.client.getOurUser()) + 1) + 1))
+				RaphyBot.rand.nextInt(BotUtils.getData(channel.getGuild()).getPoints(RaphyBot.client.getOurUser()) + 1) + 1))
 		{
 			bets.add(new Bet(RaphyBot.client.getOurUser(), RaphyBot.rand.nextInt(10), RaphyBot.rand));
 		}
@@ -73,7 +73,7 @@ public class Race
 					return false;
 				}
 			}
-			if (BotUtils.usePoints(player, amount))
+			if (BotUtils.getData(channel.getGuild()).usePoints(player, amount))
 			{
 				bets.add(new Bet(player, amount, RaphyBot.rand));
 				return true;
@@ -113,7 +113,7 @@ public class Race
 		{
 			if (bet.getAmount() > 0)
 			{
-				BotUtils.addPoints(bet.getPlayer(), bet.getAmount());
+				BotUtils.getData(channel.getGuild()).addPoints(bet.getPlayer(), bet.getAmount());
 			}
 		}
 	}
@@ -124,10 +124,11 @@ public class Race
 		{
 			counter = 0;
 			raceStarted = true;
-			
+
 			EmbedBuilder builder = new EmbedBuilder();
-			builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
-					BotUtils.getColor(channel.getGuild()).getBlue());
+			builder.withColor(BotUtils.getData(channel.getGuild()).getColor().getRed(),
+					BotUtils.getData(channel.getGuild()).getColor().getGreen(),
+					BotUtils.getData(channel.getGuild()).getColor().getBlue());
 			builder.appendField("Race Started!", "Good luck...", true);
 			postNewMessage(builder.build());
 			return true;
@@ -156,8 +157,9 @@ public class Race
 				if (counter % 5 == 0 && raceInfo != null)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
-							BotUtils.getColor(channel.getGuild()).getBlue());
+					builder.withColor(BotUtils.getData(channel.getGuild()).getColor().getRed(),
+							BotUtils.getData(channel.getGuild()).getColor().getGreen(),
+							BotUtils.getData(channel.getGuild()).getColor().getBlue());
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
@@ -189,8 +191,9 @@ public class Race
 				if (counter % 3 == 0)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.withColor(BotUtils.getColor(channel.getGuild()).getRed(), BotUtils.getColor(channel.getGuild()).getGreen(),
-							BotUtils.getColor(channel.getGuild()).getBlue());
+					builder.withColor(BotUtils.getData(channel.getGuild()).getColor().getRed(),
+							BotUtils.getData(channel.getGuild()).getColor().getGreen(),
+							BotUtils.getData(channel.getGuild()).getColor().getBlue());
 					int pot = 0;
 					float winnerPercent = 0;
 					String betInfo = "";
@@ -222,7 +225,7 @@ public class Race
 								progressLine += "=";
 							}
 						}
-						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + (int)percent
+						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + (int) percent
 								+ "%) " + "\n";
 						betInfo += progressLine;
 
@@ -235,7 +238,7 @@ public class Race
 					int winnings = (int) (pot * (winnerPercent / 100));
 					if (winner != null)
 					{
-						BotUtils.addPoints(winner, winnings);
+						BotUtils.getData(channel.getGuild()).addPoints(winner, winnings);
 
 						builder.withAuthorName("Winner: " + winner.getDisplayName(channel.getGuild()));
 						builder.withAuthorIcon(winner.getAvatarURL());

@@ -45,8 +45,9 @@ public class RaceCommand extends Command
 					BotUtils.setRace(event.getChannel(), new Race(Math.min(length, 120), event.getChannel()));
 
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.withColor(BotUtils.getColor(event.getGuild()).getRed(), BotUtils.getColor(event.getGuild()).getGreen(),
-							BotUtils.getColor(event.getGuild()).getBlue());
+					builder.withColor(BotUtils.getData(event.getChannel().getGuild()).getColor().getRed(),
+							BotUtils.getData(event.getChannel().getGuild()).getColor().getGreen(),
+							BotUtils.getData(event.getChannel().getGuild()).getColor().getBlue());
 					builder.appendField("Race Started!",
 							"A new race has begun in " + event.getChannel().mention() + ".", true);
 					BotUtils.getRace(event.getChannel()).postNewMessage(builder.build());
@@ -74,11 +75,11 @@ public class RaceCommand extends Command
 			{
 				if (BotUtils.getRace(event.getChannel()) != null && !BotUtils.getRace(event.getChannel()).isStarted())
 				{
-					if (BotUtils.getPoints(event.getAuthor()) >= 50)
+					if (BotUtils.getData(event.getGuild()).getPoints(event.getAuthor()) >= 50)
 					{
 						if (BotUtils.getRace(event.getChannel()).forceStart(true))
 						{
-							BotUtils.usePoints(event.getAuthor(), 50);
+							BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), 50);
 							BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild())
 									+ " force started a race in " + event.getChannel().mention() + " for 50 points!");
 							return;
@@ -120,7 +121,7 @@ public class RaceCommand extends Command
 				} else
 				{
 					BotUtils.sendMessage(event.getChannel(), "There is no race currently ongoing! Start one with `"
-							+ BotUtils.getPrefix(event.getGuild()) + getCommand() + " start`!");
+							+ BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + " start`!");
 					return;
 				}
 			} else if (arguments[0].toLowerCase().equals("help") || arguments[0].toLowerCase().equals("info"))
@@ -134,11 +135,13 @@ public class RaceCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "Races are virtual competitions between other online players!\n\nYou can start a race with `"
-				+ BotUtils.getPrefix(guild) + getCommand()
+				+ BotUtils.getData(guild).getPrefix() + getCommand()
 				+ " start [time]`, where the time you specify is the length of time allowed to place bets. The maximum this can be set to is 120, and all units are in seconds. Once a race has began, you can use `"
-				+ BotUtils.getPrefix(guild) + getCommand()
-				+ " bet [amount]` to bet your points in favor of yourself winning the race. You can only bet once per race, so place your bets wisely.\n\nAdministrators can cancel the current race as long as the betting has not closed yet, using `" + BotUtils.getPrefix(guild) + getCommand()
-				+ " cancel`, and any user can forcefully start a race during the betting period using `"+ BotUtils.getPrefix(guild) + getCommand()
+				+ BotUtils.getData(guild).getPrefix() + getCommand()
+				+ " bet [amount]` to bet your points in favor of yourself winning the race. You can only bet once per race, so place your bets wisely.\n\nAdministrators can cancel the current race as long as the betting has not closed yet, using `"
+				+ BotUtils.getData(guild).getPrefix() + getCommand()
+				+ " cancel`, and any user can forcefully start a race during the betting period using `"
+				+  BotUtils.getData(guild).getPrefix() + getCommand()
 				+ " force`, but 50 points will be consumed when running the command, so use it only when you must.";
 	}
 
