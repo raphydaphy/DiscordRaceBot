@@ -7,7 +7,6 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.raphydaphy.raphybot.RaphyBot;
 
 import sx.blah.discord.handle.obj.IUser;
 
@@ -60,9 +59,9 @@ public class GuildData
 		return curPoints;
 	}
 
-	public GuildData setPoints(IUser user, int amount)
+	public GuildData setPoints(Long id, int amount)
 	{
-		points.put(user.getLongID(), amount);
+		points.put(id, amount);
 		return this;
 	}
 
@@ -89,7 +88,7 @@ public class GuildData
 		JsonObject pointsJson = new JsonObject();
 		for (long longID : points.keySet())
 		{
-			pointsJson.addProperty(RaphyBot.client.getUserByID(longID).getStringID(), points.get(longID));
+			pointsJson.addProperty(String.valueOf(longID), points.get(longID));
 		}
 		mainJson.add("points", pointsJson);
 		return mainJson;
@@ -114,11 +113,8 @@ public class GuildData
 			JsonObject pointsJson = mainJson.get("points").getAsJsonObject();
 			for (Map.Entry<String, JsonElement> pointJson : pointsJson.entrySet())
 			{
-				@SuppressWarnings("deprecation")
-				IUser user = RaphyBot.client.getUserByID(pointJson.getKey());
-				int points = pointJson.getValue().getAsInt();
-				
-				data.setPoints(user, points);
+				int points = pointJson.getValue().getAsInt();	
+				data.setPoints(Long.valueOf(pointJson.getKey()), points);
 			}
 		}
 		return data;

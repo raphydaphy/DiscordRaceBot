@@ -65,9 +65,7 @@ public class RaphyBot
 			JsonObject json = new JsonObject();
 			for (long longID : BotUtils.guilds.keySet())
 			{
-				String stringID = client.getGuildByID(longID).getStringID();
-
-				json.add(stringID, BotUtils.guilds.get(longID).toJson());
+				json.add(String.valueOf(longID), BotUtils.guilds.get(longID).toJson());
 
 			}
 
