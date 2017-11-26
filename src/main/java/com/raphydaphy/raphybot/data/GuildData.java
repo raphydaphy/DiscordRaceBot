@@ -19,7 +19,10 @@ public class GuildData
 	private Color color = new Color(0, 0, 0);
 
 	// User ID -> amount of points the user has in the guild
-	public static Map<Long, Integer> points = new HashMap<>();
+	public Map<Long, Integer> points = new HashMap<>();
+	
+	// User ID -> permission in the guild
+	public Map<Long, Permission> permissions = new HashMap<>();
 
 	public GuildData setPrefix(Character prefix)
 	{
@@ -75,6 +78,25 @@ public class GuildData
 		}
 		return false;
 	}
+	
+	public GuildData setPermission(Long id, Permission permission)
+	{
+		permissions.put(id, permission);
+		return this;
+	}
+	public Permission getPermission(IUser user)
+	{
+		if (!permissions.containsKey(user.getLongID()))
+		{
+			permissions.put(user.getLongID(), Permission.USER);
+		}
+		return permissions.get(user.getLongID());
+	}
+	
+	public boolean hasPermission(IUser user, Permission minimum)
+	{
+		return getPermission(user).getLevel() >= minimum.getLevel();
+	}
 
 	public JsonObject toJson()
 	{
@@ -91,6 +113,12 @@ public class GuildData
 			pointsJson.addProperty(String.valueOf(longID), points.get(longID));
 		}
 		mainJson.add("points", pointsJson);
+		JsonObject permissionsJson = new JsonObject();
+		for (long longID : permissions.keySet())
+		{
+			permissionsJson.addProperty(String.valueOf(longID), Permission.REGISTRY.indexOf(permissions.get(longID)));
+		}
+		mainJson.add("permissions", permissionsJson);
 		return mainJson;
 	}
 
@@ -112,9 +140,16 @@ public class GuildData
 		{
 			JsonObject pointsJson = mainJson.get("points").getAsJsonObject();
 			for (Map.Entry<String, JsonElement> pointJson : pointsJson.entrySet())
+			{	
+				data.setPoints(Long.valueOf(pointJson.getKey()), pointJson.getValue().getAsInt());
+			}
+		}
+		if (mainJson.has("permissions"))
+		{
+			JsonObject permissionsJson = mainJson.get("permissions").getAsJsonObject();
+			for (Map.Entry<String, JsonElement> permissionJson : permissionsJson.entrySet())
 			{
-				int points = pointJson.getValue().getAsInt();	
-				data.setPoints(Long.valueOf(pointJson.getKey()), points);
+				data.setPermission(Long.valueOf(permissionJson.getKey()), Permission.REGISTRY.get(permissionJson.getValue().getAsInt()));
 			}
 		}
 		return data;

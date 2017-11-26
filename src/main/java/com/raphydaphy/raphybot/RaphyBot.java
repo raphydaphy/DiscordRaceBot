@@ -69,7 +69,6 @@ public class RaphyBot
 
 			}
 
-			System.out.println(json.toString());
 			try
 			{
 				FileWriter writer = new FileWriter(SAVE_FOLDER + "guild_data.json");

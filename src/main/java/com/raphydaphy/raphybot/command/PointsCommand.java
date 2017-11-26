@@ -52,13 +52,13 @@ public class PointsCommand extends Command
 				@Override
 				public int compare(IUser o1, IUser o2) 
 				{
-				    return BotUtils.getData(event.getGuild()).getPoints(o2) -  BotUtils.getData(event.getGuild()).getPoints(o1);
+				    return BotUtils.getData(event.getGuild()).getPoints(o2) - BotUtils.getData(event.getGuild()).getPoints(o1);
 				}
 			};
 			List<IUser> users = new ArrayList<>();
-			for (IUser user : RaphyBot.client.getUsers())
+			for (Long id : BotUtils.getData(event.getGuild()).points.keySet())
 			{
-				users.add(user);
+				users.add(RaphyBot.client.getUserByID(id));
 			}
 			Collections.sort(users, userSorter);
 			for (IUser user : users)
