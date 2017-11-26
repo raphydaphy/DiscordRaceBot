@@ -1,5 +1,7 @@
 package com.raphydaphy.raphybot.race;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -37,9 +39,11 @@ public class Race
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
 
 		if (!makeBet(RaphyBot.client.getOurUser(),
-				RaphyBot.rand.nextInt(BotUtils.getData(channel.getGuild()).getPoints(RaphyBot.client.getOurUser()) + 1) + 1))
+				BotUtils.getData(channel.getGuild()).getPoints(RaphyBot.client.getOurUser()).add(BigInteger.valueOf(1))
+						.divide(BigInteger.valueOf(1000)).multiply(BigInteger.valueOf((int) (Math.random() * 1000)))))
 		{
-			bets.add(new Bet(RaphyBot.client.getOurUser(), RaphyBot.rand.nextInt(10), RaphyBot.rand));
+			bets.add(new Bet(RaphyBot.client.getOurUser(), BigInteger.valueOf(RaphyBot.rand.nextInt(10)),
+					RaphyBot.rand));
 		}
 	}
 
@@ -62,9 +66,9 @@ public class Race
 		});
 	}
 
-	public boolean makeBet(IUser player, int amount)
+	public boolean makeBet(IUser player, BigInteger amount)
 	{
-		if (!raceStarted && amount > 0)
+		if (!raceStarted)
 		{
 			for (Bet bet : bets)
 			{
@@ -73,9 +77,9 @@ public class Race
 					return false;
 				}
 			}
-			if (BotUtils.getData(channel.getGuild()).usePoints(player, amount))
+			if (BotUtils.getData(channel.getGuild()).usePoints(player, amount.abs()))
 			{
-				bets.add(new Bet(player, amount, RaphyBot.rand));
+				bets.add(new Bet(player, amount.abs(), RaphyBot.rand));
 				return true;
 			}
 		}
@@ -111,10 +115,7 @@ public class Race
 	{
 		for (Bet bet : bets)
 		{
-			if (bet.getAmount() > 0)
-			{
-				BotUtils.getData(channel.getGuild()).addPoints(bet.getPlayer(), bet.getAmount());
-			}
+			BotUtils.getData(channel.getGuild()).addPoints(bet.getPlayer(), bet.getAmount().abs());
 		}
 	}
 
@@ -163,8 +164,13 @@ public class Race
 					String betInfo = "";
 					for (Bet bet : bets)
 					{
-						betInfo += bet.getIcon() + " " + bet.getPlayer().getDisplayName(channel.getGuild()) + ": "
-								+ bet.getAmount() + "\n";
+						String name = bet.getPlayer().getDisplayName(channel.getGuild());
+						if (bet.getPlayer().getLongID() == RaphyBot.client.getOurUser().getLongID())
+						{
+
+							name = bet.getPlayer().getName();
+						}
+						betInfo += bet.getIcon() + " " + name + ": " + bet.getAmount() + "\n";
 					}
 					if (bets.isEmpty())
 					{
@@ -194,26 +200,26 @@ public class Race
 					builder.withColor(BotUtils.getData(channel.getGuild()).getColor().getRed(),
 							BotUtils.getData(channel.getGuild()).getColor().getGreen(),
 							BotUtils.getData(channel.getGuild()).getColor().getBlue());
-					int pot = 0;
+					BigInteger pot = BigInteger.ZERO;
 					float winnerPercent = 0;
 					String betInfo = "";
 					IUser winner = null;
-					int highestBet = 0;
+					BigInteger highestBet = BigInteger.ZERO;
 					for (Bet bet : bets)
 					{
-						if (bet.getAmount() > highestBet)
+						if (bet.getAmount().compareTo(highestBet) > 0)
 						{
 							highestBet = bet.getAmount();
 						}
 					}
-					int top = Math.min(100, highestBet);
+					BigInteger top = highestBet.min(BigInteger.valueOf(100));
 					for (Bet bet : bets)
 					{
-						float percent = (bet.getAmount() >= top ? 100
-								: (((float) bet.getAmount() / (float) top) * 100));
+						float percent = (bet.getAmount().compareTo(top) >= 0 ? 100
+								: (((float) bet.getAmount().intValueExact() / (float) top.intValue()) * 100));
 						bet.setProgress(Math.min(bet.getProgress() + RaphyBot.rand.nextInt(5), 24));
 
-						pot += bet.getAmount() * 2;
+						pot = pot.add(bet.getAmount().multiply(BigInteger.valueOf(2)));
 						String progressLine = "";
 						for (int i = 0; i < 25; i++)
 						{
@@ -225,8 +231,13 @@ public class Race
 								progressLine += "=";
 							}
 						}
-						progressLine += "| " + bet.getPlayer().getDisplayName(channel.getGuild()) + " (" + (int) percent
-								+ "%) " + "\n";
+						String name = bet.getPlayer().getDisplayName(channel.getGuild());
+						if (bet.getPlayer().getLongID() == RaphyBot.client.getOurUser().getLongID())
+						{
+
+							name = bet.getPlayer().getName();
+						}
+						progressLine += "| " + name + " (" + (int) percent + "%) " + "\n";
 						betInfo += progressLine;
 
 						if (bet.getProgress() >= 24)
@@ -235,10 +246,10 @@ public class Race
 							winnerPercent = percent;
 						}
 					}
-					int winnings = (int) (pot * (winnerPercent / 100));
+					BigDecimal winnings = new BigDecimal(pot).multiply(BigDecimal.valueOf(winnerPercent / 100));
 					if (winner != null)
 					{
-						BotUtils.getData(channel.getGuild()).addPoints(winner, winnings);
+						BotUtils.getData(channel.getGuild()).addPoints(winner, winnings.toBigInteger());
 
 						builder.withAuthorName("Winner: " + winner.getDisplayName(channel.getGuild()));
 						builder.withAuthorIcon(winner.getAvatarURL());
@@ -252,7 +263,7 @@ public class Race
 					if (winner != null)
 					{
 						BotUtils.sendMessage(channel, winner.getDisplayName(channel.getGuild()) + " won the race for "
-								+ winnings + " points!");
+								+ winnings.toBigInteger() + " points!");
 
 						isFinished = true;
 					}

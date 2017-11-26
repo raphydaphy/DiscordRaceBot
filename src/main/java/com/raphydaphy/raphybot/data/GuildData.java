@@ -1,6 +1,7 @@
 package com.raphydaphy.raphybot.data;
 
 import java.awt.Color;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class GuildData
 	private Color color = new Color(0, 0, 0);
 
 	// User ID -> amount of points the user has in the guild
-	public Map<Long, Integer> points = new HashMap<>();
+	public Map<Long, BigInteger> points = new HashMap<>();
 	
 	// User ID -> permission in the guild
 	public Map<Long, Permission> permissions = new HashMap<>();
@@ -46,34 +47,34 @@ public class GuildData
 		return color;
 	}
 
-	public int getPoints(IUser user)
+	public BigInteger getPoints(IUser user)
 	{
 		if (!points.containsKey(user.getLongID()))
 		{
-			points.put(user.getLongID(), 0);
+			points.put(user.getLongID(), BigInteger.ZERO);
 		}
-		return points.get(user.getLongID());
+		return points.get(user.getLongID()).abs();
 	}
 
-	public int addPoints(IUser user, int amount)
+	public BigInteger addPoints(IUser user, BigInteger amount)
 	{
-		int curPoints = getPoints(user) + amount;
+		BigInteger curPoints = getPoints(user).add(amount.abs());
 		points.put(user.getLongID(), curPoints);
 		return curPoints;
 	}
 
-	public GuildData setPoints(Long id, int amount)
+	public GuildData setPoints(Long id, BigInteger amount)
 	{
 		points.put(id, amount);
 		return this;
 	}
 
-	public boolean usePoints(IUser user, int amount)
+	public boolean usePoints(IUser user, BigInteger amount)
 	{
-		int curPoints = getPoints(user);
-		if (curPoints >= amount)
+		BigInteger curPoints = getPoints(user);
+		if (curPoints.compareTo(amount.abs()) >= 0)
 		{
-			points.put(user.getLongID(), curPoints - amount);
+			points.put(user.getLongID(), curPoints.subtract(amount.abs()));
 			return true;
 		}
 		return false;
@@ -110,7 +111,7 @@ public class GuildData
 		JsonObject pointsJson = new JsonObject();
 		for (long longID : points.keySet())
 		{
-			pointsJson.addProperty(String.valueOf(longID), points.get(longID));
+			pointsJson.addProperty(String.valueOf(longID), points.get(longID).abs());
 		}
 		mainJson.add("points", pointsJson);
 		JsonObject permissionsJson = new JsonObject();
@@ -141,7 +142,7 @@ public class GuildData
 			JsonObject pointsJson = mainJson.get("points").getAsJsonObject();
 			for (Map.Entry<String, JsonElement> pointJson : pointsJson.entrySet())
 			{	
-				data.setPoints(Long.valueOf(pointJson.getKey()), pointJson.getValue().getAsInt());
+				data.setPoints(Long.valueOf(pointJson.getKey()), pointJson.getValue().getAsBigInteger().abs());
 			}
 		}
 		if (mainJson.has("permissions"))

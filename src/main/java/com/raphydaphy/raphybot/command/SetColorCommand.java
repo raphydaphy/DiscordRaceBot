@@ -1,6 +1,7 @@
 package com.raphydaphy.raphybot.command;
 
 import java.awt.Color;
+import java.math.BigInteger;
 
 import com.raphydaphy.raphybot.util.BotUtils;
 
@@ -21,7 +22,7 @@ public class SetColorCommand extends Command
 	{
 		if (arguments.length == 3)
 		{
-			if (BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), 150))
+			if (BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), BigInteger.valueOf(150)))
 			{
 				try
 				{

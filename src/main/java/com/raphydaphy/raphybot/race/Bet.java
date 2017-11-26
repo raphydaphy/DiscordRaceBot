@@ -1,5 +1,6 @@
 package com.raphydaphy.raphybot.race;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 import sx.blah.discord.handle.obj.IUser;
@@ -7,7 +8,7 @@ import sx.blah.discord.handle.obj.IUser;
 public class Bet
 {
 	private final IUser player;
-	private final int amount;
+	private final BigInteger amount;
 	private final String icon;
 	private int progress;
 
@@ -21,7 +22,7 @@ public class Bet
 			":ant:", ":octopus:", ":whale:", ":cow2:", ":water_buffalo:", ":dragon:", ":dog2:", ":ox:", ":crocodile:",
 			":cat2:" };
 
-	public Bet(IUser player, int amount, Random rand)
+	public Bet(IUser player, BigInteger amount, Random rand)
 	{
 		this.player = player;
 		this.amount = amount;
@@ -34,7 +35,7 @@ public class Bet
 		return player;
 	}
 
-	public int getAmount()
+	public BigInteger getAmount()
 	{
 		return amount;
 	}

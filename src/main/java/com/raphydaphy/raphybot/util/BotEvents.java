@@ -1,5 +1,7 @@
 package com.raphydaphy.raphybot.util;
 
+import java.math.BigInteger;
+
 import com.raphydaphy.raphybot.RaphyBot;
 import com.raphydaphy.raphybot.command.Command;
 
@@ -13,7 +15,7 @@ public class BotEvents
 	{
 		if (!event.getAuthor().isBot() && RaphyBot.rand.nextInt(7) == 1)
 		{
-			BotUtils.getData(event.getGuild()).addPoints(event.getAuthor(), 1);
+			BotUtils.getData(event.getGuild()).addPoints(event.getAuthor(), BigInteger.ONE);
 		}
 		if (event.getMessage().getContent().startsWith(Character.toString(BotUtils.getData(event.getGuild()).getPrefix())))
 		{

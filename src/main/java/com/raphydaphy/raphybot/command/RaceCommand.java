@@ -1,5 +1,7 @@
 package com.raphydaphy.raphybot.command;
 
+import java.math.BigInteger;
+
 import com.raphydaphy.raphybot.race.Race;
 import com.raphydaphy.raphybot.util.BotUtils;
 
@@ -75,11 +77,11 @@ public class RaceCommand extends Command
 			{
 				if (BotUtils.getRace(event.getChannel()) != null && !BotUtils.getRace(event.getChannel()).isStarted())
 				{
-					if (BotUtils.getData(event.getGuild()).getPoints(event.getAuthor()) >= 50)
+					if (BotUtils.getData(event.getGuild()).getPoints(event.getAuthor()).compareTo(BigInteger.valueOf(50)) >= 0)
 					{
 						if (BotUtils.getRace(event.getChannel()).forceStart(true))
 						{
-							BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), 50);
+							BotUtils.getData(event.getGuild()).usePoints(event.getAuthor(), BigInteger.valueOf(50));
 							BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild())
 									+ " force started a race in " + event.getChannel().mention() + " for 50 points!");
 							return;
@@ -94,12 +96,12 @@ public class RaceCommand extends Command
 			{
 				if (BotUtils.getRace(event.getChannel()) != null)
 				{
-					int bet = 1;
+					BigInteger bet = BigInteger.ONE;
 					if (arguments.length > 1)
 					{
 						try
 						{
-							bet = Integer.valueOf(arguments[1]);
+							bet = new BigInteger(arguments[1]);
 						} catch (NumberFormatException e)
 						{
 							BotUtils.sendMessage(event.getChannel(),

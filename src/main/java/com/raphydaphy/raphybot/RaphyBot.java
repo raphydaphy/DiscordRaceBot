@@ -74,7 +74,6 @@ public class RaphyBot
 			for (long longID : BotUtils.guilds.keySet())
 			{
 				json.add(String.valueOf(longID), BotUtils.guilds.get(longID).toJson());
-
 			}
 
 			try

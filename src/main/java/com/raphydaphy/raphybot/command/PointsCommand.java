@@ -1,5 +1,6 @@
 package com.raphydaphy.raphybot.command;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +38,7 @@ public class PointsCommand extends Command
 			{
 				BotUtils.sendMessage(event.getChannel(), of.getDisplayName(event.getGuild()) + " has "
 						+ BotUtils.getData(event.getGuild()).getPoints(of) + " points!");
+
 			} else
 			{
 				BotUtils.sendMessage(event.getChannel(), "The user you specified could not be found!");
@@ -63,7 +65,7 @@ public class PointsCommand extends Command
 				public int compare(IUser o1, IUser o2)
 				{
 					return BotUtils.getData(event.getGuild()).getPoints(o2)
-							- BotUtils.getData(event.getGuild()).getPoints(o1);
+							.compareTo(BotUtils.getData(event.getGuild()).getPoints(o1));
 				}
 			};
 			List<IUser> users = new ArrayList<>();
@@ -76,8 +78,8 @@ public class PointsCommand extends Command
 			{
 				if ((!user.getPresence().getStatus().equals(StatusType.OFFLINE)) || !onlyOnline)
 				{
-					int points = BotUtils.getData(event.getGuild()).getPoints(user);
-					if (points > 0)
+					BigInteger points = BotUtils.getData(event.getGuild()).getPoints(user);
+					if (points.compareTo(BigInteger.ZERO) > 0)
 					{
 						people += user.getName() + " -> " + BotUtils.getData(event.getGuild()).getPoints(user) + "\n";
 					}
@@ -102,7 +104,7 @@ public class PointsCommand extends Command
 					{
 						try
 						{
-							BotUtils.getData(event.getGuild()).addPoints(user, Integer.valueOf(arguments[2]));
+							BotUtils.getData(event.getGuild()).addPoints(user, new BigInteger(arguments[2]));
 							BotUtils.sendMessage(event.getChannel(),
 									"Given " + arguments[2] + " points to " + user.getDisplayName(event.getGuild()));
 						} catch (NumberFormatException e)
