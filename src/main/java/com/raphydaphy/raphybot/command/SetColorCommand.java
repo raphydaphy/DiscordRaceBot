@@ -54,7 +54,7 @@ public class SetColorCommand extends Command
 		} else
 		{
 			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments! Expected: \n`" + BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + " [r] [g] [b]`");
+					"Invalid arguments! Expected: \n`" + getCommand(event.getGuild(), true) + " [r] [g] [b]`");
 		}
 	}
 
@@ -62,7 +62,7 @@ public class SetColorCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "For the cost of 150 points, you can use this command to change the color of all bot messages. The format is `"
-				+  BotUtils.getData(guild).getPrefix() + getCommand() + " [r] [g] [b]`";
+				+  getCommand(guild, true) + " [r] [g] [b]`";
 	}
 
 }

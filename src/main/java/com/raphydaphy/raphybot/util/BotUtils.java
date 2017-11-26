@@ -11,6 +11,7 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.RequestBuffer;
 
@@ -78,5 +79,36 @@ public class BotUtils
 	public static void setRace(IChannel channel, Race race)
 	{
 		races.put(channel.getLongID(), race);
+	}
+
+	public static IUser getUserByString(String string, IGuild guild)
+	{
+		try
+		{
+			IUser byID = guild.getUserByID(Long.valueOf(string));
+
+			if (byID != null)
+			{
+				return byID;
+			}
+		} catch (NumberFormatException e)
+		{
+			// Literally do nothing it's ok!
+		}
+
+		for (IUser user : guild.getUsers())
+		{
+			String mention = user.mention();
+			String mentionFixed = mention.replaceAll("!", "");
+			if (mention.equals(string) || mentionFixed.equals(string)
+					|| (user.getName() + "#" + user.getDiscriminator()).equals(string)
+					|| user.getName().toLowerCase().equals(string.toLowerCase())
+					|| user.getDisplayName(guild).toLowerCase().equals(string))
+			{
+				return user;
+			}
+		}
+
+		return null;
 	}
 }

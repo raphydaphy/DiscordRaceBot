@@ -1,5 +1,6 @@
 package com.raphydaphy.raphybot.command;
 
+import com.raphydaphy.raphybot.RaphyBot;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -26,6 +27,7 @@ public class SetPrefixCommand extends Command
 				{
 					BotUtils.getData(event.getGuild()).setPrefix(chars[0]);
 					BotUtils.sendMessage(event.getChannel(), event.getAuthor().getDisplayName(event.getGuild()) + " set the prefix to `" + chars[0] + "`");
+					event.getGuild().setUserNickname(RaphyBot.client.getOurUser(), "RaphyBot - " + chars[0] + "help");
 				} else
 				{
 					BotUtils.sendMessage(event.getChannel(), "The prefix can only be one character!");
@@ -44,7 +46,7 @@ public class SetPrefixCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "Used to change the prefix used to summon me! Default is `$`, and Administrators on the server can use `"
-				+ BotUtils.getData(guild).getPrefix() + getCommand() + " [prefix]` to change it!";
+				+ getCommand(guild, true) + " [prefix]` to change it!";
 	}
 
 }

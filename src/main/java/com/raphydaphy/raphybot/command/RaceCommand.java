@@ -121,7 +121,7 @@ public class RaceCommand extends Command
 				} else
 				{
 					BotUtils.sendMessage(event.getChannel(), "There is no race currently ongoing! Start one with `"
-							+ BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + " start`!");
+							+ getCommand(event.getGuild(), true) + " start`!");
 					return;
 				}
 			} else if (arguments[0].toLowerCase().equals("help") || arguments[0].toLowerCase().equals("info"))
@@ -135,13 +135,13 @@ public class RaceCommand extends Command
 	public String getInfo(IGuild guild)
 	{
 		return "Races are virtual competitions between other online players!\n\nYou can start a race with `"
-				+ BotUtils.getData(guild).getPrefix() + getCommand()
+				+ getCommand(guild, true)
 				+ " start [time]`, where the time you specify is the length of time allowed to place bets. The maximum this can be set to is 120, and all units are in seconds. Once a race has began, you can use `"
-				+ BotUtils.getData(guild).getPrefix() + getCommand()
+				+ getCommand(guild, true)
 				+ " bet [amount]` to bet your points in favor of yourself winning the race. You can only bet once per race, so place your bets wisely.\n\nAdministrators can cancel the current race as long as the betting has not closed yet, using `"
-				+ BotUtils.getData(guild).getPrefix() + getCommand()
+				+ getCommand(guild, true)
 				+ " cancel`, and any user can forcefully start a race during the betting period using `"
-				+  BotUtils.getData(guild).getPrefix() + getCommand()
+				+ getCommand(guild, true)
 				+ " force`, but 50 points will be consumed when running the command, so use it only when you must.";
 	}
 

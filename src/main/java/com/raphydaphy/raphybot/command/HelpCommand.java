@@ -28,8 +28,7 @@ public class HelpCommand extends Command
 			String commandInfo = "";
 			for (Command command : Command.REGISTRY)
 			{
-				commandInfo += BotUtils.getData(event.getGuild()).getPrefix() + command.getCommand() + ": " + " "
-						+ command.getShortDesc() + "\n";
+				commandInfo += command.getCommand(event.getGuild(), true) + ": " + " " + command.getShortDesc() + "\n";
 			}
 			builder.appendField("Avalable Commands", commandInfo, true);
 			matches = true;
@@ -56,9 +55,9 @@ public class HelpCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "`" + BotUtils.getData(guild).getPrefix() + getCommand()
+		return "`" + getCommand(guild, true)
 				+ "` can be used to gain information about a command. Using the command on its own will list all possible commands. If you want to learn about a specific commmand, use `"
-				+ BotUtils.getData(guild).getPrefix() + getCommand() + " [command]` to get some information.";
+				+ getCommand(guild, true) + " [command]` to get some information.";
 	}
 
 }

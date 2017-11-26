@@ -26,11 +26,21 @@ public class PointsCommand extends Command
 	@Override
 	public void run(String[] arguments, MessageReceivedEvent event)
 	{
-		int authorPoints = BotUtils.getData(event.getGuild()).getPoints(event.getAuthor());
 		if (arguments.length == 0 || arguments[0].toLowerCase().equals("amount"))
 		{
-			BotUtils.sendMessage(event.getChannel(),
-					event.getAuthor().getDisplayName(event.getGuild()) + " has " + authorPoints + " points!");
+			IUser of = event.getAuthor();
+			if (arguments.length == 2)
+			{
+				of = BotUtils.getUserByString(arguments[1], event.getGuild());
+			}
+			if (of != null)
+			{
+				BotUtils.sendMessage(event.getChannel(), of.getDisplayName(event.getGuild()) + " has "
+						+ BotUtils.getData(event.getGuild()).getPoints(of) + " points!");
+			} else
+			{
+				BotUtils.sendMessage(event.getChannel(), "The user you specified could not be found!");
+			}
 			return;
 		} else if (arguments[0].toLowerCase().equals("lb"))
 		{
@@ -47,12 +57,13 @@ public class PointsCommand extends Command
 			}
 
 			String people = "";
-			Comparator<IUser> userSorter=new Comparator<IUser>()
+			Comparator<IUser> userSorter = new Comparator<IUser>()
 			{
 				@Override
-				public int compare(IUser o1, IUser o2) 
+				public int compare(IUser o1, IUser o2)
 				{
-				    return BotUtils.getData(event.getGuild()).getPoints(o2) - BotUtils.getData(event.getGuild()).getPoints(o1);
+					return BotUtils.getData(event.getGuild()).getPoints(o2)
+							- BotUtils.getData(event.getGuild()).getPoints(o1);
 				}
 			};
 			List<IUser> users = new ArrayList<>();
@@ -86,22 +97,19 @@ public class PointsCommand extends Command
 			{
 				if (arguments.length == 3)
 				{
-					List<IUser> specifiedUsers = RaphyBot.client.getUsersByName(arguments[1]);
-
-					if (specifiedUsers.size() > 0)
+					IUser user = BotUtils.getUserByString(arguments[1], event.getGuild());
+					if (user != null)
 					{
-						for (IUser user : specifiedUsers)
+						try
 						{
-							try
-							{
-								BotUtils.getData(event.getGuild()).addPoints(user, Integer.valueOf(arguments[2]));
-								BotUtils.sendMessage(event.getChannel(),
-										"Given " + arguments[2] + " points to " + arguments[1]);
-							} catch (NumberFormatException e)
-							{
-								BotUtils.sendMessage(event.getChannel(), arguments[2] + " is not a number!");
-							}
+							BotUtils.getData(event.getGuild()).addPoints(user, Integer.valueOf(arguments[2]));
+							BotUtils.sendMessage(event.getChannel(),
+									"Given " + arguments[2] + " points to " + user.getDisplayName(event.getGuild()));
+						} catch (NumberFormatException e)
+						{
+							BotUtils.sendMessage(event.getChannel(), arguments[2] + " is not a number!");
 						}
+
 					} else
 					{
 						BotUtils.sendMessage(event.getChannel(), "Could not find the specified user!");
@@ -114,8 +122,8 @@ public class PointsCommand extends Command
 			}
 		} else
 		{
-			BotUtils.sendMessage(event.getChannel(),
-					"Invalid arguments. Valid options for `" + BotUtils.getData(event.getGuild()).getPrefix() + getCommand() + "` are:\n`amount`, `lb`, `give`");
+			BotUtils.sendMessage(event.getChannel(), "Invalid arguments. Valid options for `"
+					+ getCommand(event.getGuild(), true) + "` are:\n`amount`, `lb`, `give`");
 			return;
 		}
 
@@ -124,7 +132,10 @@ public class PointsCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "The `" + BotUtils.getData(guild).getPrefix() + getCommand()
-				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `" +  BotUtils.getData(guild).getPrefix() + getCommand() + " lb` displays a leaderboard with the richest users of all time, and `" +  BotUtils.getData(guild).getPrefix() + getCommand() + " give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
+		return "The `" + getCommand(guild, true)
+				+ "` command is used to check your virtual points balance. Using the command with no arguments, or `!points amount`, will inform you of your current balance in points. `"
+				+ getCommand(guild, true) + " lb` displays a leaderboard with the richest users of all time, and `"
+				+ getCommand(guild, true)
+				+ " give [user] [amount]` will add the specified amount of points to the users balance, as long as the command sender has the required permissions.";
 	}
 }

@@ -31,7 +31,7 @@ public class SayCommand extends Command
 	@Override
 	public String getInfo(IGuild guild)
 	{
-		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + BotUtils.getData(guild).getPrefix() + getCommand() + " [message] to invoke it.`";
+		return "This is a simple command that causes me to respond back with whatever you wish me to. Use `" + getCommand(guild, true) + " [message] to invoke it.`";
 	}
 
 }

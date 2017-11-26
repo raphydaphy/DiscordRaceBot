@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.raphydaphy.raphybot.command.Command;
 import com.raphydaphy.raphybot.command.HelpCommand;
+import com.raphydaphy.raphybot.command.PermissionsCommand;
 import com.raphydaphy.raphybot.command.PointsCommand;
 import com.raphydaphy.raphybot.command.RaceCommand;
 import com.raphydaphy.raphybot.command.SayCommand;
@@ -25,6 +26,7 @@ import com.raphydaphy.raphybot.util.BotEvents;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.obj.IGuild;
 
 public class RaphyBot
 {
@@ -54,7 +56,13 @@ public class RaphyBot
 		Command.REGISTRY.add(new SayCommand());
 		Command.REGISTRY.add(new SetColorCommand());
 		Command.REGISTRY.add(new SetPrefixCommand());
+		Command.REGISTRY.add(new PermissionsCommand());
 		Command.REGISTRY.add(new HelpCommand());
+
+		for (IGuild guild : client.getGuilds())
+		{
+			guild.setUserNickname(RaphyBot.client.getOurUser(), "RaphyBot - " + BotUtils.getData(guild).getPrefix() + "help");
+		}
 	}
 
 	public static class SaveFunc extends TimerTask
