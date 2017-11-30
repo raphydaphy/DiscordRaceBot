@@ -23,6 +23,7 @@ import com.raphydaphy.raphybot.command.SetColorCommand;
 import com.raphydaphy.raphybot.command.SetPrefixCommand;
 import com.raphydaphy.raphybot.data.GuildData;
 import com.raphydaphy.raphybot.util.BotEvents;
+import com.raphydaphy.raphybot.util.BotEvents.OnTick;
 import com.raphydaphy.raphybot.util.BotUtils;
 
 import sx.blah.discord.api.IDiscordClient;
@@ -48,6 +49,7 @@ public class RaphyBot
 
 		readData();
 		new Timer().schedule(new SaveFunc(), 0, 30000);
+		new Timer().schedule(new OnTick(), 0, 10);
 
 		rand = new Random();
 

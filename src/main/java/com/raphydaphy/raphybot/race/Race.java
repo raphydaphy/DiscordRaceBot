@@ -38,11 +38,10 @@ public class Race
 		isFinished = false;
 		raceTimer.schedule(new RaceUpdater(), 0, 1000);
 
-		if (!makeBet(RaphyBot.client.getOurUser(),
-				BotUtils.getData(channel.getGuild()).getPoints(RaphyBot.client.getOurUser()).add(BigInteger.valueOf(1))
-						.divide(BigInteger.valueOf(1000)).multiply(BigInteger.valueOf((int) (Math.random() * 1000)))))
+		if (!makeBet(RaphyBot.client.getOurUser(), BigInteger.valueOf(RaphyBot.rand
+				.nextInt(BotUtils.getData(channel.getGuild()).getPoints(RaphyBot.client.getOurUser()).divide(BigInteger.valueOf(10)).intValue() + 1))))
 		{
-			bets.add(new Bet(RaphyBot.client.getOurUser(), BigInteger.valueOf(RaphyBot.rand.nextInt(10)),
+			bets.add(new Bet(RaphyBot.client.getOurUser(), BigInteger.valueOf(RaphyBot.rand.nextInt(10) + 1),
 					RaphyBot.rand));
 		}
 	}
@@ -135,7 +134,6 @@ public class Race
 			return true;
 		} else if (!ignoreFail)
 		{
-
 			raceStarted = true;
 			refundAll();
 			isFinished = true;
